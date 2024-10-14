@@ -54,9 +54,10 @@ def validate_name(check_name):
         return False
 '''
 
-
+questions = ["your first and last name: ", "your address: ", "your date of birth: ", "your telephone number with the country code: ", "your email address: "]
 user_input = ""
-input_info = {}
+input_info = []
+input_dict = {}
 '''
 name = "Jam Dw"#input("Please enter your last name: ")
 address = "Moserhofgasse 31 8010 Graz "#input("Please enter your address: ")
@@ -66,20 +67,18 @@ email = "adwada@grgdrg.com"#input("Please enter your email address: ")
 '''
 while user_input.casefold() != "quit":
     print("Please enter the following information, or type quit, to end.")
-    user_input = input("Please enter your first and last name: ")
+    for items in questions:
+        user_input = input(f"Please enter {items}")
+        if user_input.casefold() == "quit":
+            break
 
-    if user_input.casefold() == "quit":
-        break
-    name = input("Please enter your first and last name: ")
-    address = input("Please enter your address: ")
-    date_of_birth = input("Please enter your date of birth: ")
-    telephone = input("Please enter your telephone number with the country code, for example +43 for Austria: ")
-    email = input("Please enter your email address: ")
-    input_info[name] = address, date_of_birth, telephone, email
+        input_info.append(user_input)
+    input_dict[input_info[0]].append(input_info[1:])
 
 
-print(input_info)
 
-
+#print(input_info)
+#print(user_input)
+print(input_dict)
 
 
