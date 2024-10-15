@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="76892044-7419-46c8-a991-6fb2b0a5cc19" name="Changes" comment="did with function instead of procedurally, starting again">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data_collection.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_collection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/KMS_1_01_LE_03_Down.py" beforeDir="false" afterPath="$PROJECT_DIR$/KMS_1_01_LE_03_Down.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,14 +47,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.data_collection.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;inlay.hints&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.KMS_1_01_LE_03_Down.executor": "Run",
+    "Python.data_collection.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "settings.editor.selected.configurable": "inlay.hints"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
