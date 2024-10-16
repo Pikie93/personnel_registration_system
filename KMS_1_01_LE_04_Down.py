@@ -105,7 +105,7 @@ def main():
                         corrected_name = validate_name(user_input)
                         if corrected_name:
                             if corrected_name in input_dict:
-                                print("This name already exists in records. Please use a different name, enter 2 to view records, or enter 3 to end.")
+                                print("This name already exists in records. Please use a different name, or enter 3 to end.")
                             else:
                                 input_info.append(corrected_name)
                                 print(f"Valid name: {corrected_name}")
