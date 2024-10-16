@@ -77,12 +77,12 @@ def main():
 
     while True:
         print("Please enter one of the following:\nEnter \"1\" to input new information\nEnter \"2\" to view stored data\nEnter \"3\", to end.")
-        user_input = input("Enter your choice: ").strip().casefold()
+        user_input = input("Enter your choice: ").strip()
 
-        if user_input.casefold() == "3":
+        if user_input == "3":
             break
 
-        if user_input.casefold().strip() == "2":
+        if user_input == "2":
             if len(input_dict) > 0:
                 user_input = capitalize_name(input("Please enter a full name to see the relevant information: "))
                 if user_input.strip() in input_dict:
@@ -98,7 +98,7 @@ def main():
             for item in questions:
                 while True:
                     user_input = input_cleaning(input(f"Please enter {item}"))
-                    if user_input.casefold() == "3":
+                    if user_input == "3":
                         break
 
                     if "name" in item:
@@ -144,10 +144,10 @@ def main():
                             print(f"Valid email address: {user_input}")
                             break
 
-                if user_input.casefold().strip() == "3":
+                if user_input.strip() == "3":
                     break
 
-            if user_input.casefold().strip() == "3":
+            if user_input.strip() == "3":
                 break
 
             if len(input_info) == len(questions):
