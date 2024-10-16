@@ -78,83 +78,83 @@ input_dict = {}
 user_input = ""
 
 while True:
-    print("Please enter the following information, type data to view stored data, or type quit, to end.")
-    input_info = []
+    print("Please enter the following information, type \"new\" to input new information, type \"data\" to view stored data, or type \"quit\", to end.")
+    user_input = input("Enter your choice: ").strip().casefold()
 
-    for item in questions:
-        while True:
-            user_input = input_cleaning(input(f"Please enter {item}"))
-            if user_input.casefold() == "quit":
-                break
-
-            if "name" in item:
-                corrected_name = validate_name(user_input)
-                if corrected_name:
-                    if corrected_name in input_dict:
-                        print("This name already exists in records. Please use a different name, or type quit to end.")
-                    else:
-                        input_info.append(corrected_name)
-                        print(f"Valid name: {corrected_name}")
-                        break
-                else:
-                    print("Invalid name format. Please try again.")
-
-            elif "street" in item:
-                if validate_address(user_input):
-                    input_info.append(user_input)
-                    print(f"Valid address: {user_input}")
-                    break
-                else:
-                    print("Invalid address format. Please try again")
-
-            elif "date of birth" in item:
-                if validate_dob(user_input):
-                        input_info.append(user_input)
-                        print(f"Valid date of birth: {user_input}")
-                        break
-                else:
-                    print("Invalid date of birth. Please try again.")
-
-            elif "telephone" in item:
-                if validate_phone_numbers(user_input):
-                    input_info.append(user_input)
-                    print(f"Valid phone number: {user_input}")
-                    break
-                else:
-                    print(f"Invalid phone number format. Please try again.")
-
-            elif "email" in item:
-                user_input = user_input.replace(' ', '')
-                if validate_email_address(user_input):
-                    input_info.append(user_input)
-                    print(f"Valid email address: {user_input}")
-                    break
-
-        if user_input.casefold().strip() == "quit":
-            break
-
-        if user_input.casefold().strip() == "data":
-            if len(input_dict) > 0:
-                user_input = input("Please enter a name to see the relevant information: ")
-                if user_input.strip() in input_dict:
-                    print(f"Summary for {summary(input_dict, user_input.strip())}")
-                else:
-                    print(f"{user_input} not in database.")
-            else:
-                print(f"Database is empty, add information before querying")
-
-    if user_input.casefold().strip() == "quit":
+    if user_input.casefold() == "quit":
         break
 
     if user_input.casefold().strip() == "data":
         if len(input_dict) > 0:
-            user_input = input("Please enter a name to see the relevant information: ")
+            user_input = capitalize_name(input("Please enter a name to see the relevant information: "))
             if user_input.strip() in input_dict:
                 print(f"Summary for {summary(input_dict, user_input.strip())}")
+            else:
+                print(f"{user_input} not in database.")
+        else:
+            print(f"Database is empty, add information before querying")
+        continue
 
-    if len(input_info) == len(questions):
-        input_dict[input_info[0]] = input_info[1:]
-        print(f"Information for {input_info[0]} has been successfully added to the records.")
-        print(f"Input summary for {summary(input_dict, input_info[0])}")
-    else:
-        print("Information entry was not completed.")
+    input_info = []
+    if user_input == "new":
+        for item in questions:
+            while True:
+                user_input = input_cleaning(input(f"Please enter {item}"))
+                if user_input.casefold() == "quit":
+                    break
+
+                if "name" in item:
+                    corrected_name = validate_name(user_input)
+                    if corrected_name:
+                        if corrected_name in input_dict:
+                            print("This name already exists in records. Please use a different name, or type quit to end.")
+                        else:
+                            input_info.append(corrected_name)
+                            print(f"Valid name: {corrected_name}")
+                            break
+                    else:
+                        print("Invalid name format. Please try again.")
+
+                elif "street" in item:
+                    if validate_address(user_input):
+                        input_info.append(user_input)
+                        print(f"Valid address: {user_input}")
+                        break
+                    else:
+                        print("Invalid address format. Please try again")
+
+                elif "date of birth" in item:
+                    if validate_dob(user_input):
+                            input_info.append(user_input)
+                            print(f"Valid date of birth: {user_input}")
+                            break
+                    else:
+                        print("Invalid date of birth. Please try again.")
+
+                elif "telephone" in item:
+                    if validate_phone_numbers(user_input):
+                        input_info.append(user_input)
+                        print(f"Valid phone number: {user_input}")
+                        break
+                    else:
+                        print(f"Invalid phone number format. Please try again.")
+
+                elif "email" in item:
+                    user_input = user_input.replace(' ', '')
+                    if validate_email_address(user_input):
+                        input_info.append(user_input)
+                        print(f"Valid email address: {user_input}")
+                        break
+
+            if user_input.casefold().strip() == "quit":
+                break
+
+        if user_input.casefold().strip() == "quit":
+            break
+
+        if len(input_info) == len(questions):
+            input_dict[input_info[0]] = input_info[1:]
+            print(f"Information for {input_info[0]} has been successfully added to the records.")
+            print(f"Input summary for {summary(input_dict, input_info[0])}")
+        else:
+            print("Information entry was not completed.")
