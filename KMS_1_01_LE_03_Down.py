@@ -66,7 +66,7 @@ while True:
                         break
                     else:
                         print("Invalid phone number. Please try again.")
-                        continue
+
                 except phonenumbers.phonenumberutil.NumberParseException:
                     print("Invalid phone number format. Please try again.")
 
