@@ -73,16 +73,16 @@ def summary(dictionary, key_name):
 def main():
     questions = ["your first and last name: ", "your street and street number, followed by your postcode and city. e.g. Musterstraße 14 0123 Musterstadt: ", "your date of birth in the DD.MM.YYYY format: ", "your telephone number including the country code e.g. +43660123456: ", "your email address: "]
     input_dict = {}
-    user_input = ""
+
 
     while True:
         print("Please enter one of the following:\nEnter \"1\" to input new information\nEnter \"2\" to view stored data\nEnter \"3\", to end.")
         user_input = input("Enter your choice: ").strip().casefold()
 
-        if user_input.casefold() == "quit":
+        if user_input.casefold() == "3":
             break
 
-        if user_input.casefold().strip() == "data":
+        if user_input.casefold().strip() == "2":
             if len(input_dict) > 0:
                 user_input = capitalize_name(input("Please enter a full name to see the relevant information: "))
                 if user_input.strip() in input_dict:
@@ -94,11 +94,11 @@ def main():
             continue
 
         input_info = []
-        if user_input == "new":
+        if user_input == "1":
             for item in questions:
                 while True:
                     user_input = input_cleaning(input(f"Please enter {item}"))
-                    if user_input.casefold() == "quit":
+                    if user_input.casefold() == "3":
                         break
 
                     if "name" in item:
@@ -144,10 +144,10 @@ def main():
                             print(f"Valid email address: {user_input}")
                             break
 
-                if user_input.casefold().strip() == "quit":
+                if user_input.casefold().strip() == "3":
                     break
 
-            if user_input.casefold().strip() == "quit":
+            if user_input.casefold().strip() == "3":
                 break
 
             if len(input_info) == len(questions):
