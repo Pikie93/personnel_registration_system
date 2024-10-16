@@ -25,9 +25,10 @@ def validate_address(check_address):
 def validate_dob(dob):
     dob_pattern = r'^(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[0-2])\.(19[2-9][0-9]|20[0-1][0-9]|202[0-4])$'
     dob = re.sub(r'[-/,_]', ".", dob)
+    print(dob)
     if re.match(dob_pattern, dob):
         try:
-            day, month, year = map(int, user_input.split('.'))
+            day, month, year = map(int, dob.split('.'))
             return datetime.datetime(year, month, day)
         except ValueError:
             return False
@@ -50,14 +51,34 @@ def validate_email_address(email_address):
         return False
 
 def input_cleaning(u_input):
-    return ' '.join(part for part in u_input.split()).strip()
+    u_input = u_input.strip()
+    u_input = re.sub(r'\s+', ' ', u_input)
+
+    if re.search(r'\d+[\s./-]+\d+[\s./-]+\d+', u_input):
+        u_input = re.sub(r'\s', '', u_input)
+        print(u_input)
+    return u_input
+
+def summary(dictionary, key_name):
+
+    if key_name not in dictionary:
+        return f"No entry found for {key_name}"
+
+    dict_values = dictionary[key_name]
+    result = [f" {key_name};",
+              f"Address: {dict_values[0]}",
+              f"Date of Birth: {dict_values[1]}",
+              f"Phone Number: {dict_values[2]}",
+              f"Email Address: {dict_values[3]}"]
+    return '\n'.join(result)
+
 
 questions = ["your first and last name: ", "your street and street number, followed by your postcode and city. e.g. Musterstraße 14 0123 Musterstadt: ", "your date of birth in the DD.MM.YYYY format: ", "your telephone number including the country code e.g. +43660123456: ", "your email address: "]
 input_dict = {}
 user_input = ""
 
 while True:
-    print("Please enter the following information, or type quit, to end.")
+    print("Please enter the following information, type data to view stored data, or type quit, to end.")
     input_info = []
 
     for item in questions:
@@ -103,19 +124,37 @@ while True:
                     print(f"Invalid phone number format. Please try again.")
 
             elif "email" in item:
+                user_input = user_input.replace(' ', '')
                 if validate_email_address(user_input):
                     input_info.append(user_input)
                     print(f"Valid email address: {user_input}")
                     break
 
-        if user_input.casefold() == "quit":
+        if user_input.casefold().strip() == "quit":
             break
 
-    if user_input.casefold() == "quit":
+        if user_input.casefold().strip() == "data":
+            if len(input_dict) > 0:
+                user_input = input("Please enter a name to see the relevant information: ")
+                if user_input.strip() in input_dict:
+                    print(f"Summary for {summary(input_dict, user_input.strip())}")
+                else:
+                    print(f"{user_input} not in database.")
+            else:
+                print(f"Database is empty, add information before querying")
+
+    if user_input.casefold().strip() == "quit":
         break
+
+    if user_input.casefold().strip() == "data":
+        if len(input_dict) > 0:
+            user_input = input("Please enter a name to see the relevant information: ")
+            if user_input.strip() in input_dict:
+                print(f"Summary for {summary(input_dict, user_input.strip())}")
 
     if len(input_info) == len(questions):
         input_dict[input_info[0]] = input_info[1:]
         print(f"Information for {input_info[0]} has been successfully added to the records.")
+        print(f"Input summary for {summary(input_dict, input_info[0])}")
     else:
         print("Information entry was not completed.")
