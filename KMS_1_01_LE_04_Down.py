@@ -76,7 +76,7 @@ def main():
     user_input = ""
 
     while True:
-        print("Please enter the following information, type \"new\" to input new information, type \"data\" to view stored data, or type \"quit\", to end.")
+        print("Please enter one of the following:\nEnter \"1\" to input new information\nEnter \"2\" to view stored data\nEnter \"3\", to end.")
         user_input = input("Enter your choice: ").strip().casefold()
 
         if user_input.casefold() == "quit":
@@ -84,7 +84,7 @@ def main():
 
         if user_input.casefold().strip() == "data":
             if len(input_dict) > 0:
-                user_input = capitalize_name(input("Please enter a name to see the relevant information: "))
+                user_input = capitalize_name(input("Please enter a full name to see the relevant information: "))
                 if user_input.strip() in input_dict:
                     print(f"Summary for {summary(input_dict, user_input.strip())}")
                 else:
