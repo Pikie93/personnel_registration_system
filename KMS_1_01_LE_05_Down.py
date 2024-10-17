@@ -70,7 +70,7 @@ def summary(dictionary, key_name):
     return '\n'.join(result)
 def edit_values():
     return
-
+'''
 #filter, change values, option to display full of filtered list
 def selection_filter(dictionary):
     print("Please enter a number from the following:\n1: Name\n2: Address\n3: Date of Birth\n4: Telephone Number\n5: Email Address\n")
@@ -89,12 +89,18 @@ def selection_filter(dictionary):
 
 
     return
-
+'''
 def value_change():
     return
 #split main up, maybe add a function for the questions, and one to add everything to the dict?
 def main():
-    questions = ["your first and last name: ", "your street and street number, followed by your postcode and city. e.g. Musterstraße 14 0123 Musterstadt: ", "your date of birth in the DD.MM.YYYY format: ", "your telephone number including the country code e.g. +43660123456: ", "your email address: "]
+    questions = [
+        "your first and last name: ",
+        "your street and street number, followed by your postcode and city. e.g. Musterstraße 14 0123 Musterstadt: ",
+        "your date of birth in the DD.MM.YYYY format: ",
+        "your telephone number including the country code e.g. +43660123456: ",
+        "your email address: "
+    ]
     input_dict = {}
 
     while True:
@@ -129,9 +135,21 @@ def main():
                             if corrected_name in input_dict:
                                 print("This name already exists in records. Please use a different name, or enter 3 to end.")
                             else:
-                                input_info.append(corrected_name)
                                 print(f"Valid name: {corrected_name}")
-                                break
+                                while True:
+                                    confirm = input("Press \"1\" to confirm and add to records, \"2\" to redo the entry, or \"3\" to exit: ")
+                                    if confirm == "1":
+                                        input_info.append(corrected_name)
+                                        break
+                                    elif confirm == "2":
+                                        break
+                                    elif confirm == "3":
+                                        return False
+                                    else:
+                                        print("Invalid choice, please try again.")
+                                if confirm == "1":
+                                    confirm = ""
+                                    break
                         else:
                             print("Invalid name format. Please try again.")
 
