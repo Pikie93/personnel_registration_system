@@ -93,6 +93,26 @@ def selection_filter(dictionary):
 def value_change():
     return
 #split main up, maybe add a function for the questions, and one to add everything to the dict?
+
+def confirm_input(input_value, input_list, input_dictionary = None, is_name = False):
+    while True:
+        print(f"Valid input: {input_value}")
+        print("Press 1 to confirm and add to records.\nPress 2 to redo the entry.\nPress 3 to exit.\n ")
+        confirm = input("Please enter your choice: ")
+
+        if confirm == "1":
+            if is_name and input_value in input_dictionary:
+                print("This name already exists in records. Please try again with a different name.")
+                return "redo"
+            input_list.append(input_value)
+            return "next"
+        elif confirm == "2":
+            return "redo"
+        elif confirm == "3":
+            return "exit"
+        else:
+            print("Invalid choice. Please try again.")
+
 def main():
     questions = [
         "your first and last name: ",
@@ -132,57 +152,52 @@ def main():
                     if "name" in item:
                         corrected_name = validate_name(user_input)
                         if corrected_name:
-                            if corrected_name in input_dict:
-                                print("This name already exists in records. Please use a different name, or enter 3 to end.")
-                            else:
-                                print(f"Valid name: {corrected_name}")
-                                while True:
-                                    confirm = input("Press \"1\" to confirm and add to records, \"2\" to redo the entry, or \"3\" to exit: ")
-                                    if confirm == "1":
-                                        input_info.append(corrected_name)
-                                        break
-                                    elif confirm == "2":
-                                        break
-                                    elif confirm == "3":
-                                        return False
-                                    else:
-                                        print("Invalid choice, please try again.")
-                                if confirm == "1":
-                                    confirm = ""
-                                    break
+                            result = confirm_input(corrected_name, input_info, input_dict, is_name=True)
+                            if result == "next":
+                                break
+                            if result == "exit":
+                                return False
                         else:
                             print("Invalid name format. Please try again.")
 
                     elif "street" in item:
                         if validate_address(user_input):
-                            input_info.append(user_input)
-                            print(f"Valid address: {user_input}")
-                            break
+                            result = confirm_input(user_input, input_info)
+                            if result == "next":
+                                break
+                            elif result == "exit":
+                                return False
                         else:
                             print("Invalid address format. Please try again")
 
                     elif "date of birth" in item:
                         if validate_dob(user_input):
-                                input_info.append(user_input)
-                                print(f"Valid date of birth: {user_input}")
+                            result = confirm_input(user_input, input_info)
+                            if result == "next":
                                 break
+                            elif result == "exit":
+                                return False
                         else:
                             print("Invalid date of birth. Please try again.")
 
                     elif "telephone" in item:
                         if validate_phone_numbers(user_input):
-                            input_info.append(user_input)
-                            print(f"Valid phone number: {user_input}")
-                            break
+                            result = confirm_input(user_input, input_info)
+                            if result == "next":
+                                break
+                            elif result == "exit":
+                                return False
                         else:
                             print(f"Invalid phone number format. Please try again.")
 
                     elif "email" in item:
                         user_input = user_input.replace(' ', '')
                         if validate_email_address(user_input):
-                            input_info.append(user_input)
-                            print(f"Valid email address: {user_input}")
-                            break
+                            result = confirm_input(user_input, input_info)
+                            if result == "next":
+                                break
+                            elif result == "exit":
+                                return False
 
                 if user_input.strip() == "3":
                     break
