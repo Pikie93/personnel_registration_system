@@ -1,6 +1,49 @@
 from email_validator import validate_email, EmailNotValidError
 import phonenumbers, re, datetime
 
+class PersonData:
+    
+    def __init__(self, name, address, dob, phone_number, email):
+        self.name = name
+        self.address = address
+        self.dob = dob
+        self.phone_number = phone_number
+        self.email = email
+
+    def get_name(self):
+        return self.name
+
+    def set_name(self, name):
+        self.name = name
+
+    def get_address(self):
+        return self.address
+
+    def set_address(self, address):
+        self.address = address
+
+    def get_dob(self):
+        return self.dob
+
+    def set_dob(self, dob):
+        self.dob = dob
+
+    def get_phone_number(self):
+        return self.phone_number
+
+    def set_phone_number(self, phone_number):
+        self.phone_number = phone_number
+
+    def get_email(self):
+        return self.email
+
+    def set_email(self, email):
+        self.email = email
+
+    def __str__(self):
+        return f"Summary for {self.name}:\nAddress: {self.address}\nDate of Birth: {self.dob}\nPhone Number: {self.phone_number}\nEmail: {self.email}\n"
+
+# noinspection SpellCheckingInspection
 def validate_name(check_name):
     name_pattern = r'^([A-Za-zÄÖÜäöüß]+(-[A-Za-zÄÖÜäöüß]+)?)\s+([A-Za-zÄÖÜäöüß]+(-[A-Za-zÄÖÜäöüß]+)?)$'
     if re.match(name_pattern, check_name, re.UNICODE):
@@ -14,13 +57,13 @@ def capitalize_name(name):
     return ' '.join(capitalize_hyphen(part) for part in name.split())
 
 
+# noinspection SpellCheckingInspection
 def validate_address(check_address):
     address_pattern = r'^([A-Za-zäöüÄÖÜß\s-]+)\s+(\d+)(?:\s((?:Apt|Apartment|Top|Unit|Flat|/)\.?\s*\d+))?\s+(\d{4})\s+([A-Za-zäöüÄÖÜß\s.-]+)$'
     if re.match(address_pattern, check_address, re.UNICODE):
         return True
     else:
         return False
-
 
 def validate_dob(dob):
     dob_pattern = r'^(0?[1-9]|[12][0-9]|3[01])\.(0?[1-9]|1[0-2])\.(19[2-9][0-9]|20[0-1][0-9]|202[0-4])$'
@@ -40,7 +83,6 @@ def validate_phone_numbers(check_number):
     except phonenumbers.phonenumberutil.NumberParseException:
         return False
 
-
 def validate_email_address(email_address):
     try:
         email_address = validate_email(email_address).normalized
@@ -57,55 +99,63 @@ def input_cleaning(u_input):
         u_input = re.sub(r'\s', '', u_input)
     return u_input
 
-def summary(dictionary, key_name):
+def show_info(dictionary, key_name):
     if key_name not in dictionary:
         return f"No entry found for {key_name}"
 
     dict_values = dictionary[key_name]
     result = [f" {key_name};",
-              f"Address: {dict_values[0]}",
-              f"Date of Birth: {dict_values[1]}",
-              f"Phone Number: {dict_values[2]}",
-              f"Email Address: {dict_values[3]}"]
-    return '\n'.join(result)
+              f"Address: {dict_values.address}",
+              f"Date of Birth: {dict_values.dob}",
+              f"Phone Number: {dict_values.phone_number}",
+              f"Email Address: {dict_values.email}"]
+    print("it gets to here")
+    return '\n'.join(result)+'\n'
 def edit_values():
     return
-'''
-#filter, change values, option to display full of filtered list
-def selection_filter(dictionary):
-    print("Please enter a number from the following:\n1: Name\n2: Address\n3: Date of Birth\n4: Telephone Number\n5: Email Address\n")
-    choice = int(input("Enter your selection: "))
-    match choice:
-        case 1:
-            #Name
-        case 2:
-            #address
-        case 3:
-            #dob
-        case 4:
-            #tel
-        case 5:
-            #email
 
-
-    return
-'''
-def value_change():
-    return
-#split main up, maybe add a function for the questions, and one to add everything to the dict?
-
-def confirm_input(input_value, input_list, input_dictionary = None, is_name = False):
+def change_values(objt, number):
     while True:
-        print(f"Valid input: {input_value}")
-        print("Press 1 to confirm and add to records.\nPress 2 to redo the entry.\nPress 3 to exit.\n ")
-        confirm = input("Please enter your choice: ")
+        if number == "1":
+            name = capitalize_name(input_cleaning(input("Please enter a new name: ")))
+            if validate_name(name):
+                objt.name = name
+            else:
+                print("Invalid name, please try again.")
+        elif number == "2":
+            address = input_cleaning(input("Please enter a new address: "))
+            if validate_address(address):
+                objt.address = address
+            else:
+                print("Invalid address, please try again.")
+        elif number == "3":
+            dob = input_cleaning(input("Please enter a new date of birth: "))
+            if validate_dob(dob):
+                objt.dob = dob
+            else:
+                print("Invalid date of birth, please try again.")
+        elif number == "4":
+            phone_number = input_cleaning(input("Please enter a new phone number including the area code: "))
+            if validate_phone_numbers(phone_number):
+                objt.phone_number = phone_number
+            else:
+                print("Invalid phone number, please try again.")
+        elif number == "5":
+            email = input_cleaning(input("Please enter a new address: "))
+            if validate_email_address(email):
+                objt.email = email
+            else:
+                print("Invalid address, please try again.")
 
+#filter, change values, option to display full of filtered list
+
+def confirm_info(input_object):
+    while True:
+        print(input_object)
+        print("Press 1 to confirm and add to records.\nPress 2 to redo the entry.\nPress 3 to cancel and exit.\n ")
+        confirm = input("Please enter your choice: ")
         if confirm == "1":
-            if is_name and input_value in input_dictionary:
-                print("This name already exists in records. Please try again with a different name.")
-                return "redo"
-            input_list.append(input_value)
-            return "next"
+            return "add"
         elif confirm == "2":
             return "redo"
         elif confirm == "3":
@@ -113,6 +163,8 @@ def confirm_input(input_value, input_list, input_dictionary = None, is_name = Fa
         else:
             print("Invalid choice. Please try again.")
 
+
+# noinspection SpellCheckingInspection
 def main():
     questions = [
         "your first and last name: ",
@@ -121,8 +173,8 @@ def main():
         "your telephone number including the country code e.g. +43660123456: ",
         "your email address: "
     ]
-    input_dict = {}
-
+    people_data = {}
+    name, address, dob, phone_number, email = "","","","",""
     while True:
         print("Please enter one of the following:\nEnter \"1\" to input new information\nEnter \"2\" to view stored data\nEnter \"3\", to end.")
         user_input = input("Enter your choice: ").strip()
@@ -131,17 +183,19 @@ def main():
             break
 
         if user_input == "2":
-            if len(input_dict) > 0:
+            if len(people_data) > 0:
                 user_input = capitalize_name(input("Please enter a full name to see the relevant information: "))
-                if user_input.strip() in input_dict:
-                    print(f"Summary for {summary(input_dict, user_input.strip())}")
+                if user_input.strip() in people_data:
+                    print(f"Information for {show_info(people_data, user_input.strip())}")
+                    continue
                 else:
                     print(f"{user_input} not in database.")
+                    continue
             else:
                 print(f"Database is empty, add information before querying")
             continue
 
-        input_info = []
+
         if user_input == "1":
             for item in questions:
                 while True:
@@ -152,52 +206,45 @@ def main():
                     if "name" in item:
                         corrected_name = validate_name(user_input)
                         if corrected_name:
-                            result = confirm_input(corrected_name, input_info, input_dict, is_name=True)
-                            if result == "next":
+                            if corrected_name in people_data:
+                                print("This name already exists in the records. Please try again with a different name.")
+                            else:
+                                name = corrected_name
+                                print(f"Valid name: {name}")
                                 break
-                            if result == "exit":
-                                return False
                         else:
                             print("Invalid name format. Please try again.")
 
                     elif "street" in item:
                         if validate_address(user_input):
-                            result = confirm_input(user_input, input_info)
-                            if result == "next":
+                                address = user_input
+                                print(f"Valid address: {address}")
                                 break
-                            elif result == "exit":
-                                return False
                         else:
                             print("Invalid address format. Please try again")
 
                     elif "date of birth" in item:
                         if validate_dob(user_input):
-                            result = confirm_input(user_input, input_info)
-                            if result == "next":
+                                dob = user_input
+                                print(f"Valid dob: {dob}")
                                 break
-                            elif result == "exit":
-                                return False
                         else:
                             print("Invalid date of birth. Please try again.")
 
                     elif "telephone" in item:
                         if validate_phone_numbers(user_input):
-                            result = confirm_input(user_input, input_info)
-                            if result == "next":
-                                break
-                            elif result == "exit":
-                                return False
+                            phone_number = user_input
+                            print(f"Valid Phone Number: {phone_number}")
+                            break
                         else:
                             print(f"Invalid phone number format. Please try again.")
 
                     elif "email" in item:
                         user_input = user_input.replace(' ', '')
                         if validate_email_address(user_input):
-                            result = confirm_input(user_input, input_info)
-                            if result == "next":
+                                email = user_input
+                                print(f"Valid Email: {email}")
                                 break
-                            elif result == "exit":
-                                return False
 
                 if user_input.strip() == "3":
                     break
@@ -205,15 +252,24 @@ def main():
             if user_input.strip() == "3":
                 break
 
-            if len(input_info) == len(questions):
-                input_dict[input_info[0]] = input_info[1:]
-                print(f"Input summary for {summary(input_dict, input_info[0])}")
-                #show summary, then ask if edit, delete, add another person, or exit.
-                print(f"Information for {input_info[0]} has been successfully added to the records.")
-
+        person=PersonData(name,address,dob,phone_number,email)
+        while True:
+            result = confirm_info(person)
+            if result == "add":
+                people_data[person.name] = person
+                print("Information entry complete.")
+                break
+            elif result == "redo":
+                num = input("Please make a selection from to change from the following:\n1: Name\n2: Address\n3: Date of Birth\n4: Telephone Number\n5: Email Address\n6: Exit\nEnter your selection: ")
+                if num == "6":
+                    print("Information entry was not completed. Exiting.")
+                    break
+                change_values(person, num)
+            elif result == "exit":
+                print("Information entry not completed. Exiting.")
+                break
             else:
-                print("Information entry was not completed.")
-
+                print("Invalid input, please try again.")
 
 if __name__ == "__main__":
     main()
