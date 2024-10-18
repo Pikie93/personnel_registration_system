@@ -105,49 +105,55 @@ def show_info(dictionary, key_name):
 
     dict_values = dictionary[key_name]
     result = [f" {key_name};",
-              f"Address: {dict_values.address}",
-              f"Date of Birth: {dict_values.dob}",
-              f"Phone Number: {dict_values.phone_number}",
-              f"Email Address: {dict_values.email}"]
-    print("it gets to here")
+              f"Address: {dict_values.get_address()}",
+              f"Date of Birth: {dict_values.get_dob()}",
+              f"Phone Number: {dict_values.get_phone_number()}",
+              f"Email Address: {dict_values.get_email()}"]
     return '\n'.join(result)+'\n'
 def edit_values():
     return
 
-def change_values(objt, number):
+def change_values(objt):
     while True:
+        number = input(
+            "Please make a selection from to change from the following:\n1: Name\n2: Address\n3: Date of Birth\n4: Telephone Number\n5: Email Address\n6: Exit\nEnter your selection: ")
         if number == "1":
             name = capitalize_name(input_cleaning(input("Please enter a new name: ")))
             if validate_name(name):
-                objt.name = name
+                objt.set_name(name)
+                continue
             else:
                 print("Invalid name, please try again.")
         elif number == "2":
             address = input_cleaning(input("Please enter a new address: "))
             if validate_address(address):
-                objt.address = address
+                objt.set_address(address)
+                continue
             else:
                 print("Invalid address, please try again.")
         elif number == "3":
             dob = input_cleaning(input("Please enter a new date of birth: "))
             if validate_dob(dob):
-                objt.dob = dob
+                objt.set_dob(dob)
+                continue
             else:
                 print("Invalid date of birth, please try again.")
         elif number == "4":
             phone_number = input_cleaning(input("Please enter a new phone number including the area code: "))
             if validate_phone_numbers(phone_number):
-                objt.phone_number = phone_number
+                objt.set_phone_number(phone_number)
+                continue
             else:
                 print("Invalid phone number, please try again.")
         elif number == "5":
             email = input_cleaning(input("Please enter a new address: "))
             if validate_email_address(email):
-                objt.email = email
+                objt.set_email(email)
+                continue
             else:
                 print("Invalid address, please try again.")
-
-#filter, change values, option to display full of filtered list
+        elif number == "6":
+            return "6"
 
 def confirm_info(input_object):
     while True:
@@ -163,7 +169,11 @@ def confirm_info(input_object):
         else:
             print("Invalid choice. Please try again.")
 
-
+'''
+change values - done
+filter - goes along with displaying filtered list, needs to be able to filter by type of thing, ie address or dob I believe. 
+option to display full or filtered list - can display one full person, need to add functionality to display all data, and data filtered by name/address etc
+'''
 # noinspection SpellCheckingInspection
 def main():
     questions = [
@@ -182,11 +192,18 @@ def main():
         if user_input == "3":
             break
 
-        if user_input == "2":
+        elif user_input == "2":
             if len(people_data) > 0:
                 user_input = capitalize_name(input("Please enter a full name to see the relevant information: "))
                 if user_input.strip() in people_data:
                     print(f"Information for {show_info(people_data, user_input.strip())}")
+                    sel = input("Enter \"E\" to edit this information, or any key to continue back to the main menu: \n")
+                    if sel.casefold() == "e":
+                        old_name = person.get_name()
+                        change_values(people_data[user_input])
+                        if person.get_name() != old_name:
+                            del people_data[old_name]
+                            people_data[person.get_name()] = person
                     continue
                 else:
                     print(f"{user_input} not in database.")
@@ -196,7 +213,7 @@ def main():
             continue
 
 
-        if user_input == "1":
+        elif user_input == "1":
             for item in questions:
                 while True:
                     user_input = input_cleaning(input(f"Please enter {item}"))
@@ -243,7 +260,7 @@ def main():
                         user_input = user_input.replace(' ', '')
                         if validate_email_address(user_input):
                                 email = user_input
-                                print(f"Valid Email: {email}")
+                                print(f"Valid Email: {email}\n")
                                 break
 
                 if user_input.strip() == "3":
@@ -251,20 +268,22 @@ def main():
 
             if user_input.strip() == "3":
                 break
+        else:
+            print("Invalid input, please try again.\n")
+            continue
 
         person=PersonData(name,address,dob,phone_number,email)
         while True:
             result = confirm_info(person)
             if result == "add":
-                people_data[person.name] = person
+                people_data[person.get_name()] = person
                 print("Information entry complete.")
                 break
             elif result == "redo":
-                num = input("Please make a selection from to change from the following:\n1: Name\n2: Address\n3: Date of Birth\n4: Telephone Number\n5: Email Address\n6: Exit\nEnter your selection: ")
-                if num == "6":
+                change_values(person)
+                if change_values(person) == "6":
                     print("Information entry was not completed. Exiting.")
                     break
-                change_values(person, num)
             elif result == "exit":
                 print("Information entry not completed. Exiting.")
                 break
