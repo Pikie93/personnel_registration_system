@@ -190,39 +190,65 @@ def main():
     ]
     people_data = {}
     name, address, dob, phone_number, email = "","","","",""
+    person = ""
     while True:
-        print("Please enter one of the following:\nEnter \"1\" to input new information\nEnter \"2\" to view stored data\nEnter \"3\", to end.")
+        print("Please enter one of the following:\nEnter \"1\" to input new information\nEnter \"2\" to view stored data\nEnter \"3\", to edit stored data\nEnter \"4\" to exit.")
         user_input = input("Enter your choice: ").strip()
 
-        if user_input == "3":
+        if user_input == "4":
             break
 
-        elif user_input == "2":
+        elif user_input == "3":
             if len(people_data) > 0:
-                user_input = capitalize_name(input("Please enter a full name to see the relevant information: "))
-                if user_input.strip() in people_data:
-                    print(f"Information for {show_info(people_data, user_input.strip())}")
-                    sel = input("Enter \"E\" to edit this information, or any key to continue back to the main menu: \n")
-                    if sel.casefold() == "e":
+                while True:
+                    user_input = capitalize_name(input("Please enter a full name to edit the relevant information or enter \"4\" to return to the main menu: "))
+                    if user_input == "4":
+                        break
+                    elif user_input.strip() in people_data:
                         old_name = person.get_name()
                         change_values(people_data[user_input])
                         if person.get_name() != old_name:
                             del people_data[old_name]
                             people_data[person.get_name()] = person
-                    continue
-                else:
-                    print(f"{user_input} not in database.")
-                    continue
+                        continue
+                    else:
+                        print(f"{user_input} not in database.")
+                        continue
             else:
                 print(f"Database is empty, add information before querying")
-            continue
+                break
+
+        elif user_input == "2":
+            if len(people_data) > 0:
+                while True:
+                    user_input = input("Enter \"1\" to select a person to view.\nEnter \"2\" to view everyone based on a catagory.\nEnter \"3\" to view all data\nEnter \"4\"to quit")
+                    if user_input == "4":
+                        break
+                    elif user_input == "3":
+                        pass
+                    elif user_input == "2":
+                        pass
+                    elif user_input == "1":
+                        user_input = capitalize_name(input("Please enter a full name to see the relevant information: "))
+                        if user_input.strip() in people_data:
+                            print(f"Information for {show_info(people_data, user_input.strip())}")
+                    else:
+                        print("Invalid input, please try again.")
+                    new_input = input("Enter \"1\" to view different data sets, or any key to continue back to the main menu: \n")
+                    if new_input == "1":
+                        continue
+                    else:
+                        break
+            else:
+                print(f"Database is empty, add information before querying")
+            break
 
 
         elif user_input == "1":
             for item in questions:
                 while True:
                     user_input = input_cleaning(input(f"Please enter {item}"))
-                    if user_input == "3":
+                    if user_input == "4":
                         break
 
                     if "name" in item:
@@ -268,10 +294,10 @@ def main():
                                 print(f"Valid Email: {email}\n")
                                 break
 
-                if user_input.strip() == "3":
+                if user_input.strip() == "4":
                     break
 
-            if user_input.strip() == "3":
+            if user_input.strip() == "4":
                 break
         else:
             print("Invalid input, please try again.\n")
