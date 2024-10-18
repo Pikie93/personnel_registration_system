@@ -121,6 +121,7 @@ def change_values(objt):
             name = capitalize_name(input_cleaning(input("Please enter a new name: ")))
             if validate_name(name):
                 objt.set_name(name)
+                print(f"New name is {name}.\n")
                 continue
             else:
                 print("Invalid name, please try again.")
@@ -128,6 +129,7 @@ def change_values(objt):
             address = input_cleaning(input("Please enter a new address: "))
             if validate_address(address):
                 objt.set_address(address)
+                print(f"New address is {address}.\n")
                 continue
             else:
                 print("Invalid address, please try again.")
@@ -135,6 +137,7 @@ def change_values(objt):
             dob = input_cleaning(input("Please enter a new date of birth: "))
             if validate_dob(dob):
                 objt.set_dob(dob)
+                print(f"New date of birth is {dob}.\n")
                 continue
             else:
                 print("Invalid date of birth, please try again.")
@@ -142,6 +145,7 @@ def change_values(objt):
             phone_number = input_cleaning(input("Please enter a new phone number including the area code: "))
             if validate_phone_numbers(phone_number):
                 objt.set_phone_number(phone_number)
+                print(f"New phone number is {phone_number}.\n")
                 continue
             else:
                 print("Invalid phone number, please try again.")
@@ -149,6 +153,7 @@ def change_values(objt):
             email = input_cleaning(input("Please enter a new address: "))
             if validate_email_address(email):
                 objt.set_email(email)
+                print(f"New email address is {email}.\n")
                 continue
             else:
                 print("Invalid address, please try again.")
