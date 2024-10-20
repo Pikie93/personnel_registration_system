@@ -174,10 +174,29 @@ def confirm_info(input_object):
         else:
             print("Invalid choice. Please try again.")
 
+def filter_view(i, dictionary):
+    if i == "1":
+        print("Stored names:")
+        print(*(item.get_name() for item in dictionary.values()))
+    elif i == "2":
+        print("Stored addresses:")
+        print(*(item.get_address() for item in dictionary.values()))
+    elif i == "3":
+        print("Stored dates of birth:")
+        print(*(item.get_dob() for item in dictionary.values()))
+    elif i == "4":
+        print("Stored phone numbers:")
+        print(*(item.get_phone_number() for item in dictionary.values()))
+    elif i == "5":
+        print("Stored email addresses:")
+        print(*(item.get_email() for item in dictionary.values()))
+    else:
+        print("Invalid input, please try again.")
+
 '''
 change values - done
 filter - goes along with displaying filtered list, needs to be able to filter by type of thing, ie address or dob I believe. 
-option to display full or filtered list - can display one full person, need to add functionality to display all data, and data filtered by name/address etc
+option to display full or filtered list - can display one full person, and display all data, add data filter- by name/address etc
 '''
 # noinspection SpellCheckingInspection
 def main():
@@ -201,7 +220,7 @@ def main():
         elif user_input == "3":
             if len(people_data) > 0:
                 while True:
-                    user_input = capitalize_name(input("Please enter a full name to edit the relevant information or enter \"4\" to return to the main menu: "))
+                    user_input = capitalize_name(input("Please enter a full name to edit the relevant information or enter \"4\" to return to the main menu\nEnter your input now: "))
                     if user_input == "4":
                         break
                     elif user_input.strip() in people_data:
@@ -216,18 +235,24 @@ def main():
                         continue
             else:
                 print(f"Database is empty, add information before querying")
-                break
+            continue
 
         elif user_input == "2":
             if len(people_data) > 0:
                 while True:
-                    user_input = input("Enter \"1\" to select a person to view.\nEnter \"2\" to view everyone based on a catagory.\nEnter \"3\" to view all data\nEnter \"4\"to quit")
+                    user_input = input("Enter \"1\" to select a person to view.\nEnter \"2\" to view everyone based on a catagory.\nEnter \"3\" to view all data\nEnter \"4\"to quit\nEnter your input now: ")
                     if user_input == "4":
-                        break
+                        return
                     elif user_input == "3":
-                        pass
+                        for items in people_data.values():
+                            print(items)
                     elif user_input == "2":
-                        pass
+                        while True:
+                            user_input = input("Please choose a catagory to view from the following:\n1 for name.\n2 for address.\n3 for date of birth\n4 for phone number.\n5 for email address.\n6 to exit.\nEnter you input now: ")
+                            if user_input == "6":
+                                break
+                            filter_view(user_input, people_data)
+
                     elif user_input == "1":
                         user_input = capitalize_name(input("Please enter a full name to see the relevant information: "))
                         if user_input.strip() in people_data:
@@ -241,7 +266,7 @@ def main():
                         break
             else:
                 print(f"Database is empty, add information before querying")
-            break
+            continue
 
 
         elif user_input == "1":
