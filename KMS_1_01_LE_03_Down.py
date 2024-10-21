@@ -1,7 +1,7 @@
 from email_validator import validate_email, EmailNotValidError
 import phonenumbers, re, datetime
 
-questions = ["your first and last name: ", "your street and street number, followed by your postcode and city. e.g. Musterstraße 14 0123 Musterstadt: ", "your date of birth in the DD.MM.YYYY format: ", "your telephone number including the country code e.g. +43660123456: ", "your email address: "]
+questions = ["your first and last name", "your status, are you an (E)mployee, or a (V)isitor?", "your street and street number, followed by your postcode and city. e.g. Musterstraße 14 0123 Musterstadt", "your date of birth in the DD.MM.YYYY format", "your telephone number including the country code e.g. +43660123456", "your email address"]
 input_dict = {}
 user_input = ""
 
@@ -11,11 +11,11 @@ while True:
 
     for item in questions:
         while True:
-            user_input = input(f"Please enter {item}")
+            user_input = input(f"Please enter {item}: ")
             if user_input.casefold() == "quit":
                 break
 
-            if "name" in item:
+            elif "name" in item:
                 name_pattern = r'^([A-Za-zÄÖÜäöüß]+(-[A-Za-zÄÖÜäöüß]+)?)\s+([A-Za-zÄÖÜäöüß]+(-[A-Za-zÄÖÜäöüß]+)?)$'
                 if re.match(name_pattern, user_input, re.UNICODE):
                     corrected_name = ' '.join('-'.join(word.capitalize() for word in part.split('-'))for part in user_input.split())
@@ -29,6 +29,15 @@ while True:
                 else:
                     print("Invalid name format. Please try again.")
 
+            elif "status" in item:
+                if user_input.lower() == "e" or user_input.lower() == "v":
+                    input_info.append(user_input)
+                    if user_input.lower() == "v":
+                        print(f"Valid status: {user_input.upper()}isitor.")
+                    elif user_input.lower() == "e":
+                        print(f"Valid status: {user_input.upper()}mployee.")
+                    break
+                print("Invalid input, please enter either E for employee, or V for Visitor.")
 
             elif "street" in item:
                 address_pattern = r'^([A-Za-zäöüÄÖÜß\s-]+)\s+(\d+)(?:\s((?:Apt|Apartment|Top|Unit|Flat|/)\.?\s*\d+))?\s+(\d{4})\s+([A-Za-zäöüÄÖÜß\s.-]+)$'
