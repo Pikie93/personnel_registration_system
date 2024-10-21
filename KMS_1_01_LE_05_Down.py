@@ -155,44 +155,63 @@ def change_values(objt, people_data):
             return "6"
 
         elif number == "1":
-            name = input_cleaning(input("Please enter a new name: "))
-            if objt.set_name(name, people_data):
-                print(f"New name is {objt.get_name()}.\n")
-                continue
-            else:
-                print("Name change failed. Please try again.")
+            while True:
+                name = input_cleaning(input("Please enter a new name or \"6\" to go back: "))
+                if name == "6":
+                    break
+                elif objt.set_name(name, people_data):
+                    print(f"New name is {objt.get_name()}.\n")
+                    break
+                else:
+                    print("Name change failed. Please try again.")
 
         elif number == "2":
-            address = input_cleaning(input("Please enter a new address: "))
-            if objt.set_address(address):
-                print(f"New address is {objt.get_address()}.\n")
-                continue
-            else:
-                print("Address change failed. Please try again.")
+            while True:
+                address = input_cleaning(input("Please enter a new address or \"6\" to go back: "))
+                if address == "6":
+                    break
+                elif objt.set_address(address):
+                    print(f"New address is {objt.get_address()}.\n")
+                    break
+                else:
+                    print("Address change failed. Please try again.")
 
         elif number == "3":
-            dob = input_cleaning(input("Please enter a new date of birth: "))
-            if objt.set_dob(dob):
-                print(f"New date of birth is {objt.get_dob()}.\n")
-                continue
-            else:
-                print("D.O.B change failed. Please try again.")
+            while True:
+                dob = input_cleaning(input("Please enter a new date of birth or \"6\" to go back: "))
+                if dob == "6":
+                    break
+                elif objt.set_dob(dob):
+                    print(f"New date of birth is {objt.get_dob()}.\n")
+                    break
+                else:
+                    print("D.O.B change failed. Please try again.")
 
         elif number == "4":
-            phone_number = input_cleaning(input("Please enter a new phone number including the area code: "))
-            if objt.set_phone_number(phone_number):
-                print(f"New phone number is {objt.get_phone_number()}.\n")
-                continue
-            else:
-                print("Phone number change failed. Please try again.")
+            while True:
+                phone_number = input_cleaning(input("Please enter a new phone number including the area code or \"6\" to go back: "))
+                if phone_number == "6":
+                    break
+                elif objt.set_phone_number(phone_number):
+                    print(f"New phone number is {objt.get_phone_number()}.\n")
+                    break
+                else:
+                    print("Phone number change failed. Please try again.")
 
         elif number == "5":
-            email = input_cleaning(input("Please enter a new email address: "))
-            if objt.set_email(email):
-                print(f"New email address is {objt.get_email()}.\n")
-                continue
+            while True:
+                email = input_cleaning(input("Please enter a new email address or \"6\" to go back: "))
+                if email == "6":
+                    break
+                elif objt.set_email(email):
+                    print(f"New email address is {objt.get_email()}.\n")
+                    break
+                else:
+                    print("Email address change failed. Please try again.")
+
         else:
-            print("Email address change failed. Please try again.")
+            print("Invalid selection. Please try again.")
+
 
 def confirm_info(input_object):
     while True:
@@ -339,7 +358,7 @@ def main():
             print("Invalid input, please try again.\n")
             continue
 
-        #person=PersonData(name,address,dob,phone_number,email)
+
         while True:
             result = confirm_info(person)
             if result == "add":
@@ -347,10 +366,10 @@ def main():
                 print("Information entry complete.")
                 break
             elif result == "redo":
-                change_values(person, people_data)
+                #change_values(person, people_data)
                 if change_values(person, people_data) == "6":
-                    print("Information entry was not completed. Exiting.")
-                    break
+                    print("Information changed.")
+                    continue
             elif result == "exit":
                 print("Information entry not completed. Exiting.")
                 break
