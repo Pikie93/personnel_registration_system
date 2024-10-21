@@ -261,43 +261,47 @@ def confirm_info(input_object):
 def filter_view(i, dictionary):
     if i == "1":
         print("Stored names:")
-        print(*(item.get_name() for item in dictionary.values()))
+        print(*(item.get_name() for item in dictionary.values()),"\n")
+
+
     if i == "2":
         while True:
             user_input = input("Would you like to see (E)mployees, (V)isitors, or (B)oth? :")
             if user_input.lower() == "b":
+                print("Stored names and status:")
                 for item in dictionary.values():
-                    print("Stored names and status:")
-                    print(*(item.get_name(),": ", item.get_status()))
+                    print(f"{item.get_name()}: {item.get_status()}\n")
                 break
-            elif user_input.lower() == "e":
-                for key, item in dictionary.items():
-                    print("Stored names and status:")
-                    if item.get_status() == "Employee":
-                        print(*(item.get_name(),": ", item.get_status()))
 
+            elif user_input.lower() == "e":
+                print("Stored names and status:")
+                for item in dictionary.values():
+                    if item.get_status() == "Employee":
+                        print(f"{item.get_name()}: {item.get_status()},\n")
                 break
-            elif user_input.lower == "v":
+
+            elif user_input.lower() == "v":
+                print("Stored names and status:")
                 for item in dictionary.values():
                     if item.get_status() == "Visitor":
-                        print("Stored names and status:")
-                        print(*(item.get_name(), ": ", item.get_status()))
+                        print(f"{item.get_name()}: {item.get_status()},\n")
                 break
+
             else:
                 print("Invalid input, please try again.")
 
     elif i == "3":
         print("Stored addresses:")
-        print(*(item.get_address() for item in dictionary.values()))
+        print(*(item.get_address() for item in dictionary.values()),"\n")
     elif i == "4":
         print("Stored dates of birth:")
-        print(*(item.get_dob() for item in dictionary.values()))
+        print(*(item.get_dob() for item in dictionary.values()),"\n")
     elif i == "5":
         print("Stored phone numbers:")
-        print(*(item.get_phone_number() for item in dictionary.values()))
+        print(*(item.get_phone_number() for item in dictionary.values()),"\n")
     elif i == "6":
         print("Stored email addresses:")
-        print(*(item.get_email() for item in dictionary.values()))
+        print(*(item.get_email() for item in dictionary.values()),"\n")
     else:
         print("Invalid input, please try again.")
 
@@ -312,8 +316,9 @@ def main():
         "your email address: "
     ]
     people_data = {}
-    person = PersonData("", "", "", "", "", "")
+
     while True:
+        person = PersonData("", "", "", "", "", "")
         print("Please enter one of the following:\nEnter \"1\" to input new information\nEnter \"2\" to view stored data\nEnter \"3\", to edit stored data\nEnter \"4\" to exit.")
         user_input = input("Enter your choice: ").strip()
 
@@ -424,6 +429,7 @@ def main():
             if result == "add":
                 people_data[person.get_name()] = person
                 print("Information entry complete.")
+                print(f"Added {person.get_name()} to dict. current size: {len(people_data)}")
                 break
             elif result == "redo":
                 if change_values(person, people_data) == "7":
