@@ -3,8 +3,9 @@ import phonenumbers, re, datetime
 
 class PersonData:
     
-    def __init__(self, name, address, dob, phone_number, email):
+    def __init__(self, name, status, address, dob, phone_number, email):
         self.name = name
+        self.status = status
         self.address = address
         self.dob = dob
         self.phone_number = phone_number
@@ -24,6 +25,24 @@ class PersonData:
         except ValueError as e:
             print(f"Error setting name: {e}")
             return False
+
+    def get_status(self):
+        return self.status
+
+    def set_status(self, status):
+        try:
+            if status.lower() == "e" or status.lower() == "v":
+                if status.lower() == "v":
+                    self.status = status.upper()+"isitor"
+                elif status.lower() == "e":
+                    self.status = status.upper()+"mployee"
+                return True
+            else:
+                raise ValueError("Invalid input, please enter either E for employee, or V for Visitor.")
+        except ValueError as e:
+            print(f"Error setting status: {e}")
+            return False
+
 
     def get_address(self):
         return self.address
@@ -78,7 +97,7 @@ class PersonData:
             return False
 
     def __str__(self):
-        return f"Summary for {self.name}:\nAddress: {self.address}\nDate of Birth: {self.dob}\nPhone Number: {self.phone_number}\nEmail: {self.email}\n"
+        return f"Summary for {self.name}:\nStatus: {self.status}\nAddress: {self.address}\nDate of Birth: {self.dob}\nPhone Number: {self.phone_number}\nEmail: {self.email}\n"
 
 # noinspection SpellCheckingInspection
 def validate_name(check_name):
@@ -141,6 +160,7 @@ def show_info(dictionary, key_name):
 
     dict_values = dictionary[key_name]
     result = [f" {key_name};",
+              f"Status: {dict_values.get_status()}",
               f"Address: {dict_values.get_address()}",
               f"Date of Birth: {dict_values.get_dob()}",
               f"Phone Number: {dict_values.get_phone_number()}",
@@ -150,9 +170,9 @@ def show_info(dictionary, key_name):
 def change_values(objt, people_data):
     while True:
         number = input(
-            "Please make a selection from to change from the following:\n1: Name\n2: Address\n3: Date of Birth\n4: Telephone Number\n5: Email Address\n6: Exit\nEnter your selection: ")
-        if number == "6":
-            return "6"
+            "Please make a selection from to change from the following:\n1: Name\n2: Status\n3: Address\n4: Date of Birth\n5: Telephone Number\n6: Email Address\n7: Exit\nEnter your selection: ")
+        if number == "7":
+            return "7"
 
         elif number == "1":
             while True:
@@ -167,6 +187,17 @@ def change_values(objt, people_data):
 
         elif number == "2":
             while True:
+                status = input_cleaning(input("Please enter a new status or \"6\" to go back: "))
+                if status == "6":
+                    break
+                elif objt.set_status(status):
+                    print(f"New status is {objt.get_status()}.\n")
+                    break
+                else:
+                    print("Status change failed. Please try again.")
+
+        elif number == "3":
+            while True:
                 address = input_cleaning(input("Please enter a new address or \"6\" to go back: "))
                 if address == "6":
                     break
@@ -176,7 +207,7 @@ def change_values(objt, people_data):
                 else:
                     print("Address change failed. Please try again.")
 
-        elif number == "3":
+        elif number == "4":
             while True:
                 dob = input_cleaning(input("Please enter a new date of birth or \"6\" to go back: "))
                 if dob == "6":
@@ -187,7 +218,7 @@ def change_values(objt, people_data):
                 else:
                     print("D.O.B change failed. Please try again.")
 
-        elif number == "4":
+        elif number == "5":
             while True:
                 phone_number = input_cleaning(input("Please enter a new phone number including the area code or \"6\" to go back: "))
                 if phone_number == "6":
@@ -198,7 +229,7 @@ def change_values(objt, people_data):
                 else:
                     print("Phone number change failed. Please try again.")
 
-        elif number == "5":
+        elif number == "6":
             while True:
                 email = input_cleaning(input("Please enter a new email address or \"6\" to go back: "))
                 if email == "6":
@@ -231,16 +262,40 @@ def filter_view(i, dictionary):
     if i == "1":
         print("Stored names:")
         print(*(item.get_name() for item in dictionary.values()))
-    elif i == "2":
+    if i == "2":
+        while True:
+            user_input = input("Would you like to see (E)mployees, (V)isitors, or (B)oth? :")
+            if user_input.lower() == "b":
+                for item in dictionary.values():
+                    print("Stored names and status:")
+                    print(*(item.get_name(),": ", item.get_status()))
+                break
+            elif user_input.lower() == "e":
+                for key, item in dictionary.items():
+                    print("Stored names and status:")
+                    if item.get_status() == "Employee":
+                        print(*(item.get_name(),": ", item.get_status()))
+
+                break
+            elif user_input.lower == "v":
+                for item in dictionary.values():
+                    if item.get_status() == "Visitor":
+                        print("Stored names and status:")
+                        print(*(item.get_name(), ": ", item.get_status()))
+                break
+            else:
+                print("Invalid input, please try again.")
+
+    elif i == "3":
         print("Stored addresses:")
         print(*(item.get_address() for item in dictionary.values()))
-    elif i == "3":
+    elif i == "4":
         print("Stored dates of birth:")
         print(*(item.get_dob() for item in dictionary.values()))
-    elif i == "4":
+    elif i == "5":
         print("Stored phone numbers:")
         print(*(item.get_phone_number() for item in dictionary.values()))
-    elif i == "5":
+    elif i == "6":
         print("Stored email addresses:")
         print(*(item.get_email() for item in dictionary.values()))
     else:
@@ -250,13 +305,14 @@ def filter_view(i, dictionary):
 def main():
     questions = [
         "your first and last name: ",
+        "your status, are you an (E)mployee, or a (V)isitor?",
         "your street and street number, followed by your postcode and city. e.g. Musterstraße 14 0123 Musterstadt: ",
         "your date of birth in the DD.MM.YYYY format: ",
         "your telephone number including the country code e.g. +43660123456: ",
         "your email address: "
     ]
     people_data = {}
-    person = PersonData("", "", "", "", "")
+    person = PersonData("", "", "", "", "", "")
     while True:
         print("Please enter one of the following:\nEnter \"1\" to input new information\nEnter \"2\" to view stored data\nEnter \"3\", to edit stored data\nEnter \"4\" to exit.")
         user_input = input("Enter your choice: ").strip()
@@ -295,8 +351,8 @@ def main():
                             print(items)
                     elif user_input == "2":
                         while True:
-                            user_input = input("Please choose a catagory to view from the following:\n1 for name.\n2 for address.\n3 for date of birth\n4 for phone number.\n5 for email address.\n6 to exit.\nEnter you input now: ")
-                            if user_input == "6":
+                            user_input = input("Please choose a catagory to view from the following:\n1 for name.\n2 for status.\n3 for address.\n4 for date of birth.\n5 for phone number.\n6 for email address.\n7 to exit.\nEnter you input now: ")
+                            if user_input == "7":
                                 break
                             filter_view(user_input, people_data)
 
@@ -326,6 +382,11 @@ def main():
                     if "name" in item:
                         if person.set_name(user_input, people_data):
                             print(f"Valid name: {person.get_name()}")
+                            break
+
+                    elif "status" in item:
+                        if person.set_status(user_input):
+                            print(f"Valid status: {person.get_status()}")
                             break
 
                     elif "street" in item:
@@ -358,7 +419,6 @@ def main():
             print("Invalid input, please try again.\n")
             continue
 
-
         while True:
             result = confirm_info(person)
             if result == "add":
@@ -366,8 +426,7 @@ def main():
                 print("Information entry complete.")
                 break
             elif result == "redo":
-                #change_values(person, people_data)
-                if change_values(person, people_data) == "6":
+                if change_values(person, people_data) == "7":
                     print("Information changed.")
                     continue
             elif result == "exit":
