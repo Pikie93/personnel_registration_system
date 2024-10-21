@@ -64,14 +64,15 @@ def summary(dictionary, key_name):
 
     dict_values = dictionary[key_name]
     result = [f" {key_name};",
-              f"Address: {dict_values[0]}",
-              f"Date of Birth: {dict_values[1]}",
-              f"Phone Number: {dict_values[2]}",
-              f"Email Address: {dict_values[3]}"]
+              f"Status: {dict_values[0]}",
+              f"Address: {dict_values[1]}",
+              f"Date of Birth: {dict_values[2]}",
+              f"Phone Number: {dict_values[3]}",
+              f"Email Address: {dict_values[4]}"]
     return '\n'.join(result)
 
 def main():
-    questions = ["your first and last name: ", "your street and street number, followed by your postcode and city. e.g. Musterstraße 14 0123 Musterstadt: ", "your date of birth in the DD.MM.YYYY format: ", "your telephone number including the country code e.g. +43660123456: ", "your email address: "]
+    questions = ["your first and last name: ", "your status, are you an (E)mployee, or a (V)isitor?", "your street and street number, followed by your postcode and city. e.g. Musterstraße 14 0123 Musterstadt: ", "your date of birth in the DD.MM.YYYY format: ", "your telephone number including the country code e.g. +43660123456: ", "your email address: "]
     input_dict = {}
 
 
@@ -112,6 +113,18 @@ def main():
                                 break
                         else:
                             print("Invalid name format. Please try again.")
+
+                    elif "status" in item:
+                        if user_input.lower() == "e" or user_input.lower() == "v":
+                            if user_input.lower() == "v":
+                                input_info.append(user_input+"isitor")
+                                print(f"Valid status: {user_input}isitor.")
+                            elif user_input.lower() == "e":
+                                input_info.append(user_input+"mployee")
+                                print(f"Valid status: {user_input}mployee.")
+                            break
+                        print("Invalid input, please enter either E for employee, or V for Visitor.")
+
 
                     elif "street" in item:
                         if validate_address(user_input):
