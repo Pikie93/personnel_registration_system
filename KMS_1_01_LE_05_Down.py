@@ -158,14 +158,8 @@ def show_info(dictionary, key_name):
     if key_name not in dictionary:
         return f"No entry found for {key_name}"
 
-    dict_values = dictionary[key_name]
-    result = [f" {key_name};",
-              f"Status: {dict_values.get_status()}",
-              f"Address: {dict_values.get_address()}",
-              f"Date of Birth: {dict_values.get_dob()}",
-              f"Phone Number: {dict_values.get_phone_number()}",
-              f"Email Address: {dict_values.get_email()}"]
-    return '\n'.join(result)+'\n'
+    person_data = dictionary[key_name]
+    return str(person_data)
 
 def change_values(objt, people_data):
     while True:
