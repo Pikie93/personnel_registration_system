@@ -1,10 +1,7 @@
-from logging import exception
-
 from email_validator import validate_email, EmailNotValidError
 from datetime import datetime, date
 import phonenumbers, re, calendar, json
-import tkinter as tk
-#birthdays, who has birthday this month, and how many days until bday, or how many have passed since.
+#birthdays, who has birthday this month, and how many days until bday, or how many have passed since. done
 #sort function, also filter by first or last name as well. done filter
 #save to file/edit info in file. json? done
 #gui with tkinter.
@@ -485,7 +482,6 @@ def main():
                     continue
             else:
                 continue
-
 
         elif user_input == "4":
             if len(people_data) > 0:
