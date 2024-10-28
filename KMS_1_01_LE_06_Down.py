@@ -1,3 +1,5 @@
+from logging import exception
+
 from email_validator import validate_email, EmailNotValidError
 from datetime import datetime, date
 import phonenumbers, re, calendar, json
@@ -187,47 +189,60 @@ def show_info(dictionary, key_name):
     person_data = dictionary[key_name]
     return str(person_data)
 
-def birthdays(dictionary, selected_month):
-    #return list tuples with name, dob, and how long until or since birthday in the chosen month.
-    try:
-        month = int(selected_month) if selected_month.isdigit() else list(calendar.month_name).index(selected_month.capitalize())
-        if month < 1 or month > 12:
-            raise ValueError
-    except (ValueError, IndexError):
-        return "Invalid month input. Please enter a number between 1-12 or the name of a month."
+def birthdays(dictionary):
+    while True:
+        month_choice = input("Enter a month to see all birthdays within it or (E)xit: ")
 
-    today = date.today()
-    current_year = today.year
-    bdays = []
+        if month_choice.lower() == "e":
+            break
 
-    for person in dictionary.values():
-        dob = datetime.strptime(person.get_dob(), "%d.%m.%Y").date()
-        if dob.month == month:
-            this_year = date(current_year, dob.month, dob.day) #the birthday this year
-            last_year = date(current_year -1, dob.month, dob.day) # the birthday last year
-            next_year = date(current_year +1, dob.month, dob.day) # birthday next year
-            name = person.get_name()
+        try:
+            month = int(month_choice) if month_choice.isdigit() else list(calendar.month_name).index(month_choice.capitalize())
+            if month < 1 or month > 12:
+                raise ValueError("Month must be between 1 and 12. Please try again.")
 
-            if this_year > today:#brithday not happened yet
-                days_until = (this_year - today).days
-                days_since = (today - last_year).days
-                next_bday = this_year
-            elif this_year == today:
-                days_until = 0
-                days_since = 0
-                next_bday = next_year
-            else:#has happened
-                days_until = (next_year - today).days
-                days_since = (today - this_year).days
-                next_bday = next_year
+            today = date.today()
+            current_year = today.year
+            bdays = []
 
-            bdays.append(f"{name}\n{dob}\nDays since the last birthday: {days_since}\ndays until the next birthday: {days_until}")
+            for person in dictionary.values():
+                dob = datetime.strptime(person.get_dob(), "%d.%m.%Y").date()
+                if dob.month == month:
+                    this_year = date(current_year, dob.month, dob.day) #the birthday this year
+                    last_year = date(current_year -1, dob.month, dob.day) # the birthday last year
+                    next_year = date(current_year +1, dob.month, dob.day) # birthday next year
+                    name = person.get_name()
 
-    return bdays
+                    if this_year > today:#brithday not happened yet
+                        days_until = (this_year - today).days
+                        days_since = (today - last_year).days
+                        next_bday = this_year
+                    elif this_year == today:
+                        days_until = 0
+                        days_since = 0
+                        next_bday = next_year
+                    else:#has happened
+                        days_until = (next_year - today).days
+                        days_since = (today - this_year).days
+                        next_bday = next_year
 
+                    bdays.append(f"{name}.\n{dob}.\nDays since the last birthday: {days_since}.\nDays until the next birthday: {days_until}.\nNext birthday: {next_bday}.")
 
+            if bdays:
+                for people in bdays:
+                    print(people)
+            else:
+                print(f"No birthdays found in {calendar.month_name[month]}.")
 
-
+        except ValueError as e:
+            print(f"Error: {e}")
+            continue
+        except IndexError:
+            print("Error: Invalid month input.")
+            continue
+        except Exception as e:
+            print(f"An unexpected error has occured: {e}")
+            continue
 
 def sort_items():
     pass
@@ -474,14 +489,7 @@ def main():
 
         elif user_input == "4":
             if len(people_data) > 0:
-                while True:
-                    month_choice = input("Enter a month to see all birthdays within it or (E)xit: ")
-                    if month_choice.lower == "e":
-                        break
-                    else:
-                        print(birthdays(people_data, month_choice))
-                        continue
-
+                birthdays(people_data)
             else:
                 print(f"Database is empty, add information before querying")
             continue
@@ -498,7 +506,6 @@ def main():
                         old_name = person.get_name()
                         change_values(person, people_data)
                         if person.get_name() != old_name:
-                            #del people_data[old_name]
                             people_data[person.get_name()] = people_data.pop(old_name)
                             write_to(filename, people_data)
                         continue
