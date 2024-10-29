@@ -24,17 +24,16 @@ class PersonData:
     def set_name(self, name, people_data):
         try:
             if capitalize_name(name) in people_data:
-                raise ValueError("This name already exists in the records. Please try again.")
+                return False, "This name already exists in the records. Please try again."
             if not validate_name(name):
-                raise ValueError("Invalid name format. Please try again.")
+                return False, "Invalid name format. Please try again."
             self.name = capitalize_name(name)
             names = name.split(" ")
             self.first_name = capitalize_name(names[0])
             self.last_name = capitalize_name(names[-1])
-            return True
+            return True, ""
         except ValueError as e:
-            print(f"Error setting name: {e}")
-            return False
+            return False, f"Error setting name: {str(e)}"
 
     def get_first_name(self):
         return self.first_name
@@ -241,8 +240,6 @@ def birthdays(dictionary):
             print(f"An unexpected error has occured: {e}")
             continue
 
-def sort_items():
-    pass
 
 def change_values(objt, people_data):
     while True:
@@ -462,8 +459,8 @@ def main():
             "Please enter one of the following:\nEnter \"1\" to input new information\n"
             "Enter \"2\" to view stored data\n"
             "Enter \"3\" to edit stored data\n"
-            "\"4\" to view Birthdays.\n"
-            "\"5\" to clear databank.\n"
+            "Enter \"4\" to view Birthdays.\n"
+            "Enter \"5\" to clear databank.\n"
             "Enter \"6\" to exit.")
         user_input = input("Enter your choice: ").strip()
 
