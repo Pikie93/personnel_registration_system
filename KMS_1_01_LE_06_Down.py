@@ -1,13 +1,8 @@
 from email_validator import validate_email, EmailNotValidError
 from datetime import datetime, date
 import phonenumbers, re, calendar, json
-#birthdays, who has birthday this month, and how many days until bday, or how many have passed since. done
-#sort function, also filter by first or last name as well. done filter
-#save to file/edit info in file. json? done
-#gui with tkinter.
 
 class PersonData:
-
     def __init__(self, name, first_name, last_name, status, address, dob, phone_number, email):
         self.name = name
         self.first_name = first_name
@@ -31,7 +26,7 @@ class PersonData:
             names = name.split(" ")
             self.first_name = capitalize_name(names[0])
             self.last_name = capitalize_name(names[-1])
-            return True, ""
+            return True, f"Name successfully updated to {self.get_name()}."
         except ValueError as e:
             return False, f"Error setting name: {str(e)}"
 
@@ -46,31 +41,21 @@ class PersonData:
 
     # noinspection SpellCheckingInspection
     def set_status(self, status):
-        try:
-            if status.lower() == "e" or status.lower() == "v":
-                if status.lower() == "v":
-                    self.status = status.upper() + "isitor"
-                elif status.lower() == "e":
-                    self.status = status.upper() + "mployee"
-                return True
-            else:
-                raise ValueError("Invalid input, please enter either E for employee, or V for Visitor.")
-        except ValueError as e:
-            print(f"Error setting status: {e}")
-            return False
+        if status.lower() in ["employee", "visitor"]:
+            self.status = status.capitalize()
+            return True, ""
+        else:
+            return False, "Invalid input, please select either Employee or Visitor."
 
     def get_address(self):
         return self.address
 
     def set_address(self, address):
-        try:
-            if not validate_address(address):
-                raise ValueError("Invalid address format. Please try again")
+        if validate_address(address):
             self.address = address
-            return True
-        except ValueError as e:
-            print(f"Error setting address: {e}")
-            return False
+            return True, ""
+        else:
+            return False, "Invalid address format. Please try again"
 
     def get_dob(self):
         return self.dob
@@ -79,23 +64,19 @@ class PersonData:
         try:
             validated_dob = validate_dob(dob)
             self.dob = validated_dob
-            return True
+            return True, ""
         except ValueError as e:
-            print(f"Error setting date of birth: {e}")
-            return False
+            return False, f"Error setting date of birth: {e}"
 
     def get_phone_number(self):
         return self.phone_number
 
     def set_phone_number(self, phone_number):
-        try:
-            if not validate_phone_numbers(phone_number):
-                raise ValueError("Invalid phone number. Please try again.")
-            self.phone_number = phone_number
-            return True
-        except ValueError as e:
-            print(f"Error setting phone number: {e}")
-            return False
+            if validate_phone_numbers(phone_number):
+                self.phone_number = phone_number
+                return True, ""
+            else:
+                return False, "Invalid phone number. Please try again."
 
     def get_email(self):
         return self.email
@@ -108,8 +89,7 @@ class PersonData:
             self.email = email
             return True
         except ValueError as e:
-            print(f"Error setting email: {e}")
-            return False
+            return False, f"Error setting email: {e}"
 
     def __str__(self):
         return f"Summary for {self.name}:\nStatus: {self.status}\nAddress: {self.address}\nDate of Birth: {self.dob}\nPhone Number: {self.phone_number}\nEmail: {self.email}\n"
@@ -241,174 +221,114 @@ def birthdays(dictionary):
             continue
 
 
-def change_values(objt, people_data):
-    while True:
-        number = input(
-            "Please make a selection from to change from the following:\n1: Name\n2: Status\n3: Address\n4: Date of Birth\n5: Telephone Number\n6: Email Address\n7: Exit\nEnter your selection: ")
-        if number == "7":
-            return "7"
+def change_values(objt, attribute, new_value, people_data, filename):
+    new_value = input_cleaning(new_value)
 
-        elif number == "1":
-            while True:
-                name_choice = input_cleaning(input("Please enter a number from the following:\n\"1\" To edit the first name.\n\"2\" To edit the second name.\n\"3\" To edit the whole name.\n\"6\" To go back: "))
-                if name_choice == "6":
-                    break
-                elif name_choice in ["1", "2", "3"]:
-                    if name_choice == "1":
-                        current_last_name = objt.last_name
-                        new_name = input("Please enter a new first name: ")
-                        full_name = f"{new_name} {current_last_name}"
-                    elif name_choice == "2":
-                        current_first_name = objt.first_name
-                        new_name = input("Please enter a new last name: ")
-                        full_name = f"{current_first_name} {new_name}"
-                    elif name_choice == "3":
-                        new_name = input("Please enter a new name: ")
-                        full_name = new_name
-                    else:
-                        print("Invalid selection. Please try again.")
-                        continue
-                    if objt.set_name(full_name, people_data):
-                        print(f"New name is {objt.get_name()}.\n")
-                        break
-                    else:
-                        print("Name change failed. Please try again.")
-                else:
-                    print("Invalid input. Please try again.")
-                    continue
+    if attribute == "Full Name":
+        old_name = objt.get_name()
+        success, message = objt.set_name(new_value, people_data)
+        if success:
+            people_data[objt.get_name()] = people_data.pop(old_name)
+            write_to("personnel_data.json", people_data)
+            return f"New name is {objt.get_name()}"
+        return message
 
-        elif number == "2":
-            while True:
-                status = input_cleaning(input("Please enter a new status or \"6\" to go back: "))
-                if status == "6":
-                    break
-                elif objt.set_status(status):
-                    print(f"New status is {objt.get_status()}.\n")
-                    break
-                else:
-                    print("Status change failed. Please try again.")
+    elif attribute == "First Name":
+        old_name = objt.get_name()
+        full_name = f"{new_value} {objt.get_last_name()}"
+        success, message = objt.set_name(full_name, people_data)
+        if success:
+            people_data[objt.get_name()] = people_data.pop(old_name)
+            write_to("personnel_data.json", people_data)
+            return f"New first name is {objt.get_first_name()}."
+        return message
 
-        elif number == "3":
-            while True:
-                address = input_cleaning(input("Please enter a new address or \"6\" to go back: "))
-                if address == "6":
-                    break
-                elif objt.set_address(address):
-                    print(f"New address is {objt.get_address()}.\n")
-                    break
-                else:
-                    print("Address change failed. Please try again.")
+    elif attribute == "Last Name":
+        old_name = objt.get_name()
+        full_name = f"{objt.get_first_name()} {new_value}"
+        success, message = objt.set_name(full_name, people_data)
+        if success:
+            people_data[objt.get_name()] = people_data.pop(old_name)
+            write_to("personnel_data.json", people_data)
+            return f"New last name is {objt.get_last_name()}"
+        return message
 
-        elif number == "4":
-            while True:
-                dob = input_cleaning(input("Please enter a new date of birth or \"6\" to go back: "))
-                if dob == "6":
-                    break
-                elif objt.set_dob(dob):
-                    print(f"New date of birth is {objt.get_dob()}.\n")
-                    break
-                else:
-                    print("D.O.B change failed. Please try again.")
+    elif attribute == "Status":
+        success, message = objt.set_status(new_value)
+        if success:
+            write_to("personnel_data.json", people_data)
+            return f"New status is {objt.get_status()}"
+        return message
 
-        elif number == "5":
-            while True:
-                phone_number = input_cleaning(
-                    input("Please enter a new phone number including the area code or \"6\" to go back: "))
-                if phone_number == "6":
-                    break
-                elif objt.set_phone_number(phone_number):
-                    print(f"New phone number is {objt.get_phone_number()}.\n")
-                    break
-                else:
-                    print("Phone number change failed. Please try again.")
+    elif attribute == "Address":
+        success, message = objt.set_address(new_value)
+        if success:
+            write_to("personnel_data.json", people_data)
+            return f"New address is {objt.get_address()}"
+        return message
 
-        elif number == "6":
-            while True:
-                email = input_cleaning(input("Please enter a new email address or \"6\" to go back: "))
-                if email == "6":
-                    break
-                elif objt.set_email(email):
-                    print(f"New email address is {objt.get_email()}.\n")
-                    break
-                else:
-                    print("Email address change failed. Please try again.")
+    elif attribute == "Date of Birth":
+        success, message = objt.set_dob(new_value)
+        if success:
+            write_to("personnel_data.json", people_data)
+            return f"New date of birth is {objt.get_dob()}"
+        return
 
-        else:
-            print("Invalid selection. Please try again.")
+    elif attribute == "Phone Number":
+        success, message = objt.set_phone_number(new_value)
+        if success:
+            write_to("personnel_data.json", people_data)
+            return f"New phone number is {objt.get_phone_number()}"
+        return message
 
+    elif attribute == "Email Address":
+        success, message = objt.set_email(new_value)
+        if success:
+            write_to("personnel_data.json", people_data)
+            return f"New email address is {objt.get_email()}"
+        return message
 
+'''
 def confirm_info(input_object):
     while True:
         print(input_object)
         print("Press 1 to confirm and add to records.\nPress 2 to redo the entry.\nPress 3 to cancel and exit.\n ")
         confirm = input("Please enter your choice: ")
         if confirm == "1":
-            return "add"
+            return "add", f"{input_object.get_name()} has been added to the records."
         elif confirm == "2":
-            return "redo"
+            return "redo", "Please redo the entry."
         elif confirm == "3":
             return "exit"
         else:
             print("Invalid choice. Please try again.")
-
+'''
 # noinspection SpellCheckingInspection
 def filter_view(i, dictionary):
-    if i == "1":
-        while True:
-            view_choice = input("Would you like to view:\n1: Full names?\n2: First names?\3: Last names?\nPlease enter your selection: ")
-            print("Stored names:")
-            if view_choice == "1":
-                print(*(item.get_name() for item in dictionary.values()), "\n")
-                break
-            elif view_choice == "2":
-                print(*(item.get_first_name() for item in dictionary.values()), "\n")
-                break
-            elif view_choice  == "3":
-                print(*(item.get_last_name() for item in dictionary.values()), "\n")
-                break
-            else:
-                print("Invalid input, please try again.")
-
-    if i == "2":
-        while True:
-            user_input = input("Would you like to see (E)mployees, (V)isitors, or (B)oth? :")
-            if user_input.lower() == "b":
-                print("Stored names and status:")
-                for item in dictionary.values():
-                    print(f"{item.get_name()}: {item.get_status()}\n")
-                break
-
-            elif user_input.lower() == "e":
-                print("Stored names and status:")
-                for item in dictionary.values():
-                    if item.get_status() == "Employee":
-                        print(f"{item.get_name()}: {item.get_status()},\n")
-                break
-
-            elif user_input.lower() == "v":
-                print("Stored names and status:")
-                for item in dictionary.values():
-                    if item.get_status() == "Visitor":
-                        print(f"{item.get_name()}: {item.get_status()},\n")
-                break
-
-            else:
-                print("Invalid input, please try again.")
-
-    elif i == "3":
-        print("Stored addresses:")
-        print(*(item.get_address() for item in dictionary.values()), "\n")
-    elif i == "4":
-        print("Stored dates of birth:")
-        print(*(item.get_dob() for item in dictionary.values()), "\n")
-    elif i == "5":
-        print("Stored phone numbers:")
-        print(*(item.get_phone_number() for item in dictionary.values()), "\n")
-    elif i == "6":
-        print("Stored email addresses:")
-        print(*(item.get_email() for item in dictionary.values()), "\n")
+    if i == "View all Data":
+        return "\n\n".join(str(person) for person in dictionary.values())#*(person for person in dictionary.values()), "\n"
+    elif i == "View Full Names":
+        return "\n".join(person.get_name() for person in dictionary.values())
+    elif i == "View First Names":
+        return "\n".join(person.get_first_name() for person in dictionary.values())
+    elif i == "View Last Names":
+        return "\n".join(person.get_last_name() for person in dictionary.values())
+    elif i == "View Employees":
+        return "\n".join(
+            f"{person.get_name()}: {person.get_status()}" for person in dictionary.values() if person.get_status() == "Employee")
+    elif i == "View Visitors":
+        return "\n".join(
+            f"{person.get_name()}: {person.get_status()}" for person in dictionary.values() if person.get_status() == "Visitor")
+    elif i == "View Addresses":
+        return "\n".join(f"{person.get_name()}: {person.get_address()}" for person in dictionary.values())
+    elif i == "View Dates of Birth":
+        return "\n".join(f"{person.get_name()}: {person.get_dob()}" for person in dictionary.values())
+    elif i == "View Phone Numbers":
+        return "\n".join(f"{person.get_name()}: {person.get_phone_number()}" for person in dictionary.values())
+    elif i == "View Email Addresses":
+        return "\n".join(f"{person.get_name()}: {person.get_email()}" for person in dictionary.values())
     else:
-        print("Invalid input, please try again.")
+        return "Please select an option"
 
 def read_from(filename):
     try:
@@ -419,23 +339,32 @@ def read_from(filename):
             data = json.loads(content)
         return {name: PersonData(**person_data) for name, person_data in data.items()}
     except FileNotFoundError:
-        print(f"File {filename} not found.")
-        return {}
-    except json.JSONDecodeError as e:
-        print(f"Error reading {filename}: {str(e)}.")
-        print(f"Causing the error: {content}")
-        return {}
+        raise FileNotFoundError(f"File {filename} not found.")
+    except json.JSONDecodeError:
+        raise ValueError(f"Error decoding JSON from {filename}. File might be corrupted.")
+    except Exception as e:
+        raise Exception(f"An unexpected error occurred while reading {filename}: {str(e)}")
 
 def write_to(filename, people_data):
-    existing_data = {name: person.__dict__ for name, person in people_data.items()}
+    try:
+        existing_data = {name: person.__dict__ for name, person in people_data.items()}
 
-    with open(filename, "w") as file:
-        json.dump(existing_data, file, indent=4)
+        with open(filename, "w") as file:
+            json.dump(existing_data, file, indent=4)
+    except IOError:
+        raise IOError(f"Error writing to file {filename}.")
+    except Exception as e:
+        raise Exception(f"An unexpected error occurred while writing to {filename}: {str(e)}")
+
 
 def delete_data(filename):
-    with open(filename, "w") as file:
-        json.dump({}, file)
-    print(f"{filename} has been cleared.")
+    try:
+        with open(filename, "w") as file:
+            json.dump({}, file)
+    except IOError:
+        raise IOError(f"Error clearing file {filename}.")
+    except Exception as e:
+        raise Exception(f"An unexpected error occurred while clearing {filename}: {str(e)}")
 
 # noinspection SpellCheckingInspection
 def main():
@@ -445,7 +374,7 @@ def main():
 
     questions = [
         "your first and last name: ",
-        "your status, are you an (E)mployee, or a (V)isitor?",
+        "your status, please enter \"Employee\" or  \"Visitor?\"",
         "your street and street number, followed by your postcode and city. e.g. Musterstraße 14 0123 Musterstadt: ",
         "your date of birth in the DD.MM.YYYY format: ",
         "your telephone number including the country code e.g. +43660123456: ",
