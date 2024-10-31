@@ -1,4 +1,5 @@
 import tkinter as tk
+import calendar
 from tkinter import ttk, messagebox, simpledialog
 from KMS_1_01_LE_06_Down import PersonData, change_values, read_from, write_to, delete_data, birthdays, filter_view
 
@@ -18,7 +19,7 @@ class PersonnelInfoUI:
         self.container.pack(fill="both", expand=True)
 
         self.frames = {}
-        for f in (MainMenu, AddNew, ViewData, EditData):#, Bdays, DelData):
+        for f in (MainMenu, AddNew, ViewData, EditData, Bdays, DelData):
             frame = f(self.container, self)
             self.frames[f] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -40,9 +41,9 @@ class MainMenu(ttk.Frame):
         buttons = [
             ("Add Person", AddNew),
             ("View Data", ViewData),
-            ("Edit Data", EditData)#,
-            #("Birthdays", Bdays),
-            #("Delete Data", DelData)
+            ("Edit Data", EditData),
+            ("Birthdays", Bdays),
+            ("Delete Data", DelData)
         ]
 
         for text, page in buttons:
@@ -167,7 +168,7 @@ class ViewData(ttk.Frame):
 
         ttk.Button(self, text="Back to Main Menu", command=lambda:controller.show_frame(MainMenu)).pack(pady=10)
 
-    def on_select(self, event):
+    def on_select(self, _):
         selection = self.combo.get()
         data = filter_view(selection, self.controller.people_data)
         self.display_data(data)
@@ -239,12 +240,101 @@ class EditData(ttk.Frame):
         print(self.controller.people_data)
         self.person_dropdown["values"] = list(self.controller.people_data.keys())
 
+class Bdays(ttk.Frame):
+    def __init__(self, parent, controller):
+        ttk.Frame.__init__(self, parent)
+        self.controller = controller
+
+        label = ttk.Label(self, text="Birthdays")
+        label.pack(padx=10, pady=10)
+
+        self.month_select = ttk.Combobox(self, values=list(calendar.month_name[1:]), state="readonly")
+        self.month_select.set("Select a month")
+        self.month_select.pack(pady=10)
+        self.month_select.bind("<<ComboboxSelected>>", self.on_select)
+
+        text_frame = ttk.Frame(self)
+        text_frame.pack(expand=True, fill="both", padx=10, pady=10)
+
+        self.text_area = tk.Text(text_frame, wrap=tk.WORD, width=50, height=20)
+        self.text_area.pack(side=tk.LEFT, expand=True, fill="both")
+
+        scrollbar = ttk.Scrollbar(text_frame, orient="vertical", command=self.text_area.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.text_area.configure(yscrollcommand=scrollbar.set)
+
+        ttk.Button(self, text="Back to Main Menu", command=lambda: controller.show_frame(MainMenu)).pack(pady=10)
+
+    def on_select(self, _):
+        selection = self.month_select.get()
+        data = birthdays(selection, self.controller.people_data)
+        self.display_data(data)
+
+    def display_data(self, data):
+        self.text_area.delete("1.0", tk.END)
+        self.text_area.insert(tk.END, data)
+
+class DelData(ttk.Frame):
+    def __init__(self, parent, controller):
+        ttk.Frame.__init__(self, parent)
+        self.controller = controller
+
+        label = ttk.Label(self, text="Delete Data")
+        label.pack(padx=10, pady=10)
+
+        ttk.Button(self, text="Delete All Data", command=self.delete_all_data).pack(pady=5)
+
+        ttk.Button(self, text="Delete Entry", command=self.delete_entry).pack(pady=5)
+
+        ttk.Button(self, text="Back to Main Menu", command=lambda: controller.show_frame(MainMenu)).pack(pady=10)
+
+    def delete_all_data(self):
+        if messagebox.askyesno("Confirm", "Are you sure you want to delete all data?"):
+            try:
+                delete_data(self.controller.filename)
+                result = self.controller.people_data.clear()
+                messagebox.showinfo("Success", result)
+            except Exception as e:
+                messagebox.showerror("Error", str(e))
 
 
+    def delete_entry(self):
+        del_window = tk.Toplevel(self)
+        del_window.title("Delete Entry")
+        del_window.geometry("300x150")
+        x = self.winfo_rootx() + 50
+        y = self.winfo_rooty() + 50
+
+        del_window.geometry(f"+{x}+{y}")
+
+        person_var = tk.StringVar()
+        person_dropdown = ttk.Combobox(del_window, textvariable=person_var, state="readonly")
+        person_dropdown["values"] = list(self.controller.people_data.keys())
+        person_dropdown.set("Select a person")
+        person_dropdown.pack(pady=5)
+
+        def confirm_delete():
+            selected_person = person_var.get()
+            if selected_person and selected_person != "Select a person":
+                if messagebox.askyesno("Confirm", f"Are you sure you want to delete the data for {selected_person}?"):
+                    try:
+                        result = delete_data(self.controller.filename, selected_person)
+                        self.controller.people_data = read_from(self.controller.filename)
+
+                        messagebox.showinfo("Delete Result", result)
+
+                        person_dropdown["values"] = list(self.controller.people_data.keys())
+                        person_var.set("Select a person")
+
+                    except Exception as e:
+                        messagebox.showerror("Error", str(e))
+
+        ttk.Button(del_window, text="Delete", command=confirm_delete).pack(pady=5)
 
 def run_gui():
     root = tk.Tk()
-    app = PersonnelInfoUI(root)
+    _ = PersonnelInfoUI(root)
     root.mainloop()
 
 if __name__ == "__main__":
