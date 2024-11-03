@@ -1,13 +1,16 @@
 import tkinter as tk
-import calendar
+import calendar, person_data_class
 from tkinter import ttk, messagebox, simpledialog
-from KMS_1_01_LE_06_Down import PersonData, change_values, read_from, write_to, delete_data, birthdays, filter_view
+from KMS_1_01_LE_06_Down import change_values, read_from, write_to, delete_data, birthdays, filter_view
+
 
 
 class PersonnelInfoUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Personnel Info")
+        self.root.geometry("435x475")
+        self.root.resizable(False, False)
 
         self.filename = "personnel_data.json"
         try:
@@ -26,6 +29,7 @@ class PersonnelInfoUI:
 
         self.show_frame(MainMenu)
 
+
     def show_frame(self, fr):
         fr = self.frames[fr]
         fr.tkraise()
@@ -36,7 +40,7 @@ class MainMenu(ttk.Frame):
         self.controller = controller
 
         label = ttk.Label(self, text="Main Menu")
-        label.pack(pady=10, padx=10)
+        label.pack(padx=10, pady=10)
 
         buttons = [
             ("Add Person", AddNew),
@@ -54,8 +58,11 @@ class AddNew(ttk.Frame):
         ttk.Frame.__init__(self, parent)
         self.controller = controller
 
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+
         label = ttk.Label(self, text="Add Person")
-        label.grid(row=0, column=0, columnspan=2, pady=10, padx=10)
+        label.grid(row=0, column=0, columnspan=2, padx=10,pady=10)
 
         self.entries = {}
         entry_fields = [
@@ -69,12 +76,14 @@ class AddNew(ttk.Frame):
         for i, (field_label, field_name) in enumerate(entry_fields, start=1):
             ttk.Label(self, text=f"{field_label}:").grid(row=i, column=0, sticky="e", padx=5, pady=5)
             self.entries[field_name] = ttk.Entry(self)
-            self.entries[field_name].grid(row=i, column=1, padx=5, pady=5)
+            self.entries[field_name].grid(row=i, column=1, sticky="w", padx=5, pady=5)
+
+        self.entries["phone"].insert(0, "+43")
 
         ttk.Label(self, text="Status:").grid(row=len(entry_fields)+1, column=0, sticky="e", padx=5, pady=5)
         self.status_var = tk.StringVar()
         self.status_dropdown = ttk.Combobox(self, textvariable=self.status_var, values=["Employee", "Visitor"], state="readonly")
-        self.status_dropdown.grid(row=len(entry_fields)+1, column=1, padx=5, pady=5)
+        self.status_dropdown.grid(row=len(entry_fields)+1, column=1, sticky="w", padx=5, pady=5)
         self.status_dropdown.set("Select Status")
 
         ttk.Button(self, text="Add Person", command=self.add_person).grid(row=len(entry_fields)+2, column=0, columnspan=2, pady=10)
@@ -83,7 +92,7 @@ class AddNew(ttk.Frame):
 
     def add_person(self):
         try:
-            person_preview = PersonData("", "", "", "", "", "", "", "")
+            person_preview = person_data_class.PersonData("", "", "", "", "", "", "", "")
             person_preview.set_name(self.entries["name"].get(), self.controller.people_data)
             person_preview.set_address(self.entries["address"].get())
             person_preview.set_dob(self.entries["dob"].get())
@@ -94,7 +103,7 @@ class AddNew(ttk.Frame):
             if not all([person_preview.get_name(), person_preview.get_address(), person_preview.get_dob(), person_preview.get_phone_number(), person_preview.get_email(), person_preview.get_status()]):
                 raise ValueError("Not all fields were set correctly.")
 
-            new_person = PersonData(person_preview.get_name(),
+            new_person = person_data_class.PersonData(person_preview.get_name(),
                                     person_preview.get_first_name(),
                                     person_preview.get_last_name(),
                                     person_preview.get_status(),
@@ -130,6 +139,7 @@ class AddNew(ttk.Frame):
     def clear_entries(self):
         for entry in self.entries.values():
             entry.delete(0, tk.END)
+        self.entries["phone"].insert(0, "+43")
         self.status_dropdown.set("Select Status")
 
 class ViewData(ttk.Frame):

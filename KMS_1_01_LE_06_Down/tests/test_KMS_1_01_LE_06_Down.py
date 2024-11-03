@@ -1,14 +1,11 @@
-import builtins
-from os.path import samefile
-
 import pytest
 from unittest.mock import patch
-from KMS_1_01_LE_06_Down import confirm_info, change_values, PersonData
+from KMS_1_01_LE_06_Down.KMS_1_01_LE_06_Down import change_values, PersonData
 
 
 @pytest.fixture
 def sample_person():
-    return PersonData("John Doe", "Employee", "123 Main St 1234 City", "01.01.1990", "+43123123123", "q@gmail.com")
+    return PersonData("John Doe", "John", "Doe", "Employee", "123 Main St 1234 City", "01.01.1990", "+43123123123", "q@gmail.com")
 
 @pytest.fixture()
 def sample_people_data(sample_person):
