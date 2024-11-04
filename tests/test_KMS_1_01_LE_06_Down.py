@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch
-from KMS_1_01_LE_06_Down.KMS_1_01_LE_06_Down import change_values, PersonData
+from KMS_1_01_LE_06_Down import change_values, PersonData
 
 
 @pytest.fixture
