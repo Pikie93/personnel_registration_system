@@ -3,7 +3,21 @@ import calendar, person_data_class
 from tkinter import ttk, messagebox, simpledialog
 from logic1 import change_values, read_from, write_to, delete_data, birthdays, filter_view
 
+class SearchableCombobox(ttk.Combobox):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.all_values = list(kwargs.get('values', []))
+        self.var = kwargs.get('textvariable', tk.StringVar())
+        self.var.trace_add('write', self.filter_values)
 
+    def filter_values(self, *args):
+        search_term = self.var.get().lower()
+        if search_term:
+            filtered = [v for v in self.all_values if search_term in v.lower()]
+            self['values'] = filtered
+        else:
+            self['values'] = self.all_values
+            
 class PersonnelInfoUI:
     def __init__(self, root):
         self.root = root
@@ -314,18 +328,52 @@ class DelData(ttk.Frame):
         del_window.geometry("300x150")
         x = self.winfo_rootx() + 50
         y = self.winfo_rooty() + 50
-
         del_window.geometry(f"+{x}+{y}")
 
-        person_var = tk.StringVar()
-        person_dropdown = ttk.Combobox(del_window, textvariable=person_var, state="readonly")
-        person_dropdown["values"] = list(self.controller.people_data.keys())
-        person_dropdown.set("Select a person")
-        person_dropdown.pack(pady=5)
+        search_var = tk.StringVar()
+        search_label = tk.Label(del_window, text="Search:")
+        search_label.pack(pady=5)
+        search_entry = tk.Entry(del_window, textvariable=search_var)
+        search_entry.pack(pady=5)
+
+        list_frame = tk.Frame(del_window)
+        list_frame.pack(pady=5, fill=tk.BOTH, expand=True)
+
+        scrollbar = tk.Scrollbar(list_frame)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        person_listbox = tk.Listbox(list_frame, yscrollcommand=scrollbar.set)
+        person_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        scrollbar.config(command=person_listbox.yview)
+
+        for person in self.controller.people_data.keys():
+            person_listbox.insert(tk.END, person)
+
+
+        def update_list(*args):
+            search_term = search_var.get().lower()
+            person_listbox.delete(0, tk.END)
+            for person in self.controller.people_data.keys():
+                if search_term in person.lower():
+                    person_listbox.insert(tk.END, person)
+
+        search_var.trace_add('write', update_list)
+
+        def on_select(event):
+            if person_listbox.curselection():
+                selected_index = person_listbox.curselection()[0]
+                selected_person = person_listbox.get(selected_index)
+                print(f"Selected: {selected_person}")
+
+
+        person_listbox.bind('<<ListboxSelect>>', on_select)
+
 
         def confirm_delete():
-            selected_person = person_var.get()
-            if selected_person and selected_person != "Select a person":
+            selected_indices = person_listbox.curselection()
+            if selected_indices:
+                selected_person = person_listbox.get(selected_indices[0])
                 if messagebox.askyesno("Confirm", f"Are you sure you want to delete the data for {selected_person}?"):
                     try:
                         result = delete_data(self.controller.filename, selected_person)
@@ -333,14 +381,30 @@ class DelData(ttk.Frame):
 
                         messagebox.showinfo("Delete Result", result)
 
-                        person_dropdown["values"] = list(self.controller.people_data.keys())
-                        person_var.set("Select a person")
+                        update_list()
 
                     except Exception as e:
                         messagebox.showerror("Error", str(e))
+            else:
+                messagebox.showwarning("Warning", "Please select a person to delete.")
 
-        ttk.Button(del_window, text="Delete", command=confirm_delete).pack(pady=5)
+        def update_list(*args):
+            search_term = search_var.get().lower()
+            person_listbox.delete(0, tk.END) 
+            for person in self.controller.people_data.keys():
+                if search_term in person.lower():
+                    person_listbox.insert(tk.END, person)
 
+
+        delete_button = ttk.Button(del_window, text="Delete", command=confirm_delete)
+        delete_button.pack(pady=5)
+
+
+        person_listbox.bind('<<ListboxSelect>>', lambda event: delete_button.config(state='normal'))
+
+
+        delete_button.config(state='disabled')
+        
 def run_gui():
     root = tk.Tk()
     _ = PersonnelInfoUI(root)
