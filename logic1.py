@@ -116,7 +116,7 @@ def change_values(objt, attribute, new_value, people_data, filename):
             return f"New email address is {objt.get_email()}"
         return message
 
-# noinspection SpellCheckingInspection
+
 def filter_view(i, dictionary):
     if i == "View all Data":
         return "\n\n".join(str(person) for person in dictionary.values())

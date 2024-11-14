@@ -29,16 +29,6 @@
         "phone_number": "+43123456789",
         "email": "eq@gmail.com"
     },
-    "Jane Doe": {
-        "name": "Jane Doe",
-        "first_name": "Jane",
-        "last_name": "Doe",
-        "status": "Employee",
-        "address": "Doe 12 2134 Pol",
-        "dob": "11.11.1991",
-        "phone_number": "+43123456789",
-        "email": "jdoe@gmail.com"
-    },
     "J D": {
         "name": "J D",
         "first_name": "J",
@@ -68,5 +58,15 @@
         "dob": "12.01.1995",
         "phone_number": "+436609523819",
         "email": "lglglglg@gmail.com"
+    },
+    "Jane Boe": {
+        "name": "Jane Boe",
+        "first_name": "Jane",
+        "last_name": "Boe",
+        "status": "Employee",
+        "address": "Doe 12 2134 Pol",
+        "dob": "11.11.1991",
+        "phone_number": "+43123456789",
+        "email": "jdoe@gmail.com"
     }
 }

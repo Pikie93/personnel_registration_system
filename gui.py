@@ -1,8 +1,7 @@
 import tkinter as tk
 import calendar, person_data_class
 from tkinter import ttk, messagebox, simpledialog
-from KMS_1_01_LE_06_Down import change_values, read_from, write_to, delete_data, birthdays, filter_view
-
+from logic1 import change_values, read_from, write_to, delete_data, birthdays, filter_view
 
 
 class PersonnelInfoUI:
