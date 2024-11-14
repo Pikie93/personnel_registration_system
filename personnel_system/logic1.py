@@ -1,6 +1,6 @@
 from datetime import datetime, date
 import re, calendar, json
-import person_data_class
+import personnelRegistrationSystem.personnel_system.person_data_class as person_data_class
 
 def input_cleaning(u_input):
     u_input = u_input.strip()

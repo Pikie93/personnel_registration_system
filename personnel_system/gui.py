@@ -1,7 +1,7 @@
 import tkinter as tk
-import calendar, person_data_class
+import calendar, personnelRegistrationSystem.personnel_system.person_data_class as person_data_class
 from tkinter import ttk, messagebox, simpledialog
-from logic1 import change_values, read_from, write_to, delete_data, birthdays, filter_view
+from personnelRegistrationSystem.personnel_system.logic1 import change_values, read_from, write_to, delete_data, birthdays, filter_view
 
 class SearchableCombobox(ttk.Combobox):
     def __init__(self, master, **kwargs):

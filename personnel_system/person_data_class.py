@@ -1,4 +1,4 @@
-from validation_logic import *
+from personnelRegistrationSystem.personnel_system.validation_logic import *
 
 class PersonData:
     def __init__(self, name, first_name, last_name, status, address, dob, phone_number, email):

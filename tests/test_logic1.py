@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
-from ..logic1 import change_values, write_to
-from person_data_class import PersonData
+from personnel_system.logic1 import change_values, write_to
+from personnelRegistrationSystem.personnel_system.person_data_class import PersonData
 
 
 @pytest.fixture
