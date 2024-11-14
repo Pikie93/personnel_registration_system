@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import patch
-from pythonProject.logic1 import change_values, PersonData
+from logic1 import change_values 
+from person_data_class import PersonData
 
 
 @pytest.fixture
